@@ -1,10 +1,21 @@
-import Film from '../film/film';
+import Film from '../film-card/film-card';
+
+const FILMS_COUNT = 20;
 
 type PromoProps = {
-  tytle: string,
+  title: string,
   genre: string,
-  date: string,
+  date: number,
 }
+
+const getFilms = (filmsCount: number) => {
+  const films = [];
+
+  for (let i = 0; i < filmsCount; i++) {
+    films.push(<Film/>);
+  }
+  return films;
+};
 
 function Main(promoData: PromoProps): JSX.Element {
   return (
@@ -44,7 +55,7 @@ function Main(promoData: PromoProps): JSX.Element {
             </div>
 
             <div className="film-card__desc">
-              <h2 className="film-card__title">{promoData.tytle}</h2>
+              <h2 className="film-card__title">{promoData.title}</h2>
               <p className="film-card__meta">
                 <span className="film-card__genre">{promoData.genre}</span>
                 <span className="film-card__year">{promoData.date}</span>
@@ -107,26 +118,7 @@ function Main(promoData: PromoProps): JSX.Element {
           </ul>
 
           <div className="catalog__films-list">
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
-            <Film/>
+            {getFilms(FILMS_COUNT)}
           </div>
 
           <div className="catalog__more">
