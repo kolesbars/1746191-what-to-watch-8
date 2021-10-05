@@ -3,15 +3,15 @@ import ReactDOM from 'react-dom';
 import App from './components/app/app';
 
 const promo = {
-  tytle: 'The Grand Budapest Hotel',
+  title: 'The Grand Budapest Hotel',
   genre: 'Drama',
-  date: '2014',
+  date: 2014,
 };
 
 ReactDOM.render(
   <React.StrictMode>
     <App
-      tytle = {promo.tytle}
+      title = {promo.title}
       genre = {promo.genre}
       date = {promo.date}
     />
