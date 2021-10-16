@@ -8,14 +8,16 @@ import NotFoundScreen from '../not-found-screen/not-found-screen';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
 import PrivateRoute from '../private-route/private-route';
+import {FilmType} from '../../types/film-type';
 
-type Promo = {
+type AppProps = {
   title: string,
   genre: string,
   date: number,
+  films: FilmType[]
 }
 
-function App({title, genre, date}: Promo): JSX.Element {
+function App({title, genre, date, films}: AppProps): JSX.Element {
   return (
     <BrowserRouter>
       <Switch>
@@ -24,6 +26,7 @@ function App({title, genre, date}: Promo): JSX.Element {
             title = {title}
             genre = {genre}
             date = {date}
+            films = {films}
           />
         </Route>
         <Route path = {AppRoute.SignIn} exact>
@@ -32,18 +35,22 @@ function App({title, genre, date}: Promo): JSX.Element {
         <PrivateRoute
           path = {AppRoute.MyList}
           exact
-          render = {() => <MyList/>}
-          authorizationStatus={AuthorizationStatus.NoAuth}
+          render = {() => <MyList films = {films}/>}
+          authorizationStatus={AuthorizationStatus.Auth}
         >
         </PrivateRoute>
         <Route path = {AppRoute.Film} exact>
-          <Film/>
+          <Film
+            films = {films}
+          />
         </Route>
         <Route path = {AppRoute.AddReview} exact>
-          <AddReview/>
+          <AddReview films = {films}/>
         </Route>
         <Route path = {AppRoute.Player} exact>
-          <Player/>
+          <Player
+            films = {films}
+          />
         </Route>
         <Route>
           <NotFoundScreen/>

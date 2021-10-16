@@ -1,23 +1,19 @@
-import Film from '../film-card/film-card';
+import {FilmList} from '../film-list/film-list';
+import {FilmType} from '../../types/film-type';
+import {useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import {AppRoute} from '../../const';
 
-const FILMS_COUNT = 20;
-
-type PromoProps = {
+type MainScreenProps = {
   title: string,
   genre: string,
   date: number,
+  films: FilmType[],
 }
 
-const getFilms = (filmsCount: number) => {
-  const films = [];
+function Main(props: MainScreenProps): JSX.Element {
+  const history = useHistory();
 
-  for (let i = 0; i < filmsCount; i++) {
-    films.push(<Film/>);
-  }
-  return films;
-};
-
-function Main(promoData: PromoProps): JSX.Element {
   return (
     <>
       <section className="film-card">
@@ -29,11 +25,11 @@ function Main(promoData: PromoProps): JSX.Element {
 
         <header className="page-header film-card__head">
           <div className="logo">
-            <a className="logo__link" href="{url}">
+            <Link className="logo__link" to="/">
               <span className="logo__letter logo__letter--1">W</span>
               <span className="logo__letter logo__letter--2">T</span>
               <span className="logo__letter logo__letter--3">W</span>
-            </a>
+            </Link>
           </div>
 
           <ul className="user-block">
@@ -43,7 +39,7 @@ function Main(promoData: PromoProps): JSX.Element {
               </div>
             </li>
             <li className="user-block__item">
-              <a className="user-block__link" href="{url}">Sign out</a>
+              <Link className="user-block__link" to="/login">Sign out</Link>
             </li>
           </ul>
         </header>
@@ -55,20 +51,24 @@ function Main(promoData: PromoProps): JSX.Element {
             </div>
 
             <div className="film-card__desc">
-              <h2 className="film-card__title">{promoData.title}</h2>
+              <h2 className="film-card__title">{props.title}</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{promoData.genre}</span>
-                <span className="film-card__year">{promoData.date}</span>
+                <span className="film-card__genre">{props.genre}</span>
+                <span className="film-card__year">{props.date}</span>
               </p>
 
               <div className="film-card__buttons">
-                <button className="btn btn--play film-card__button" type="button">
+                <button className="btn btn--play film-card__button" type="button"
+                  onClick={() => history.push(AppRoute.Player)}
+                >
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use xlinkHref="#play-s"></use>
                   </svg>
                   <span>Play</span>
                 </button>
-                <button className="btn btn--list film-card__button" type="button">
+                <button className="btn btn--list film-card__button" type="button"
+                  onClick={() => history.push(AppRoute.MyList)}
+                >
                   <svg viewBox="0 0 19 20" width="19" height="20">
                     <use xlinkHref="#add"></use>
                   </svg>
@@ -118,7 +118,9 @@ function Main(promoData: PromoProps): JSX.Element {
           </ul>
 
           <div className="catalog__films-list">
-            {getFilms(FILMS_COUNT)}
+            <FilmList
+              films = {props.films}
+            />
           </div>
 
           <div className="catalog__more">
@@ -128,11 +130,11 @@ function Main(promoData: PromoProps): JSX.Element {
 
         <footer className="page-footer">
           <div className="logo">
-            <a className="logo__link logo__link--light" href="{url}">
+            <Link className="logo__link logo__link--light" to="/">
               <span className="logo__letter logo__letter--1">W</span>
               <span className="logo__letter logo__letter--2">T</span>
               <span className="logo__letter logo__letter--3">W</span>
-            </a>
+            </Link>
           </div>
 
           <div className="copyright">

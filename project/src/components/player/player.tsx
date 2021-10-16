@@ -1,13 +1,26 @@
-function Player(): JSX.Element {
+import {FilmType} from '../../types/film-type';
+import {useHistory} from 'react-router-dom';
+import {AppRoute} from '../../const';
+
+type PlayerProps = {
+  films: FilmType[]
+}
+
+function Player(props: PlayerProps): JSX.Element {
+  const {films} = props;
+  const {videoLink} = films[1];
+
   const divStyle = {
     left: '30%',
   };
 
+  const history = useHistory();
+
   return (
     <div className="player">
-      <video src="#" className="player__video" poster="img/player-poster.jpg"></video>
+      <video src={videoLink} className="player__video" poster="img/player-poster.jpg"></video>
 
-      <button type="button" className="player__exit">Exit</button>
+      <button type="button" className="player__exit" onClick={() => history.push(AppRoute.Main)}>Exit</button>
 
       <div className="player__controls">
         <div className="player__controls-row">
