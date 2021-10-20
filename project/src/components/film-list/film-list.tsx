@@ -8,7 +8,7 @@ type FilmListProps = {
 
 function FilmList(props: FilmListProps): JSX.Element {
 
-  const [, setActiveFilm] = useState(0);
+  const [activeFilm, setActiveFilm] = useState(0);
 
   return (
     <>
@@ -18,6 +18,7 @@ function FilmList(props: FilmListProps): JSX.Element {
           <FilmCard
             film = {film}
             key={keyValue}
+            activeFilm = {activeFilm}
             setActiveFilm = {setActiveFilm}
           />
         );
@@ -26,3 +27,4 @@ function FilmList(props: FilmListProps): JSX.Element {
 }
 
 export {FilmList};
+
