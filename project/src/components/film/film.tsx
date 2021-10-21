@@ -80,7 +80,7 @@ function Film(props: FilmProps): JSX.Element {
                   </svg>
                   <span>My list</span>
                 </button>
-                <Link to="/films/:id/review" className="btn film-card__button">Add review</Link>
+                <Link to="/films/id/review" className="btn film-card__button">Add review</Link>
               </div>
             </div>
           </div>
