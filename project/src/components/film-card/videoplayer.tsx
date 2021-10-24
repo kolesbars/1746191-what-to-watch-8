@@ -27,18 +27,13 @@ function VideoPlayer(props: VideoPlayerProps): JSX.Element {
   }, [src]);
 
   useEffect(() => {
-    if (videoRef.current === null) {
-      return;
-    }
-
-    if (isPlaing) {
+    if (videoRef.current !== null && isPlaing) {
       videoRef.current.play();
     }
-
   });
 
   return (
-    <video src={src} ref={videoRef}></video>
+    <video src={src} ref={videoRef} muted></video>
   );
 }
 

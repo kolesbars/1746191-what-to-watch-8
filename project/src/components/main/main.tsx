@@ -3,6 +3,9 @@ import {FilmType} from '../../types/film-type';
 import {useHistory} from 'react-router-dom';
 import {Link} from 'react-router-dom';
 import {AppRoute} from '../../const';
+import GenresList from './genres-list';
+import {connect, ConnectedProps} from 'react-redux';
+import {State} from '../../types/state';
 
 type MainScreenProps = {
   title: string,
@@ -11,7 +14,16 @@ type MainScreenProps = {
   films: FilmType[],
 }
 
-function Main(props: MainScreenProps): JSX.Element {
+const mapStateToProps = ({filmList}: State) => ({
+  filmList,
+});
+
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type ConnectedComponentProps = PropsFromRedux & MainScreenProps;
+
+function Main(props: ConnectedComponentProps): JSX.Element {
   const history = useHistory();
 
   return (
@@ -83,43 +95,12 @@ function Main(props: MainScreenProps): JSX.Element {
       <div className="page-content">
         <section className="catalog">
           <h2 className="catalog__title visually-hidden">Catalog</h2>
-
-          <ul className="catalog__genres-list">
-            <li className="catalog__genres-item catalog__genres-item--active">
-              <a href="{url}" className="catalog__genres-link">All genres</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="{url}" className="catalog__genres-link">Comedies</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="{url}" className="catalog__genres-link">Crime</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="{url}" className="catalog__genres-link">Documentary</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="{url}" className="catalog__genres-link">Dramas</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="{url}#" className="catalog__genres-link">Horror</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="{url}" className="catalog__genres-link">Kids & Family</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="{url}" className="catalog__genres-link">Romance</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="{url}" className="catalog__genres-link">Sci-Fi</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="{url}" className="catalog__genres-link">Thrillers</a>
-            </li>
-          </ul>
-
+          <GenresList
+            films={props.films}
+          />
           <div className="catalog__films-list">
             <FilmList
-              films = {props.films}
+              films = {props.filmList}
             />
           </div>
 
@@ -145,4 +126,4 @@ function Main(props: MainScreenProps): JSX.Element {
     </>);
 }
 
-export default Main;
+export default connector(Main);
