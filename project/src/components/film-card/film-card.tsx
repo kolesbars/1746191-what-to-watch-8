@@ -15,9 +15,7 @@ function FilmCard(props: FilmsCardProps): JSX.Element {
 
   const [isMouseEnter, setIsMouseEnter] = useState(false);
   const [isVideo, setIsVideo] = useState(false);
-
-  let timeOutForMouseEnter: NodeJS.Timeout;
-  let timeOutForMouseLeave: NodeJS.Timeout;
+  const [timeOutForMouseEnter, setTimeOutForMouseEnter] = useState(setTimeout(() => null, 1000));
 
   useEffect(() => {
     if (isMouseEnter) {
@@ -27,25 +25,24 @@ function FilmCard(props: FilmsCardProps): JSX.Element {
     return () => {
       setIsVideo(false);
       clearTimeout(timeOutForMouseEnter);
-      clearTimeout(timeOutForMouseLeave);
     };
-  }, [isMouseEnter]);
+  }, [isMouseEnter, timeOutForMouseEnter]);
 
   return (
     <article
       className="small-film-card catalog__films-card"
       onMouseEnter = {() => {
         props.setActiveFilm(film.id);
-        timeOutForMouseEnter = setTimeout(() => {
+        const TimeOutId = setTimeout(() => {
           setIsMouseEnter(true);
         }, 1000);
+        setTimeOutForMouseEnter(TimeOutId);
       }}
 
       onMouseLeave = {() => {
         props.setActiveFilm(0);
-        timeOutForMouseLeave = setTimeout(() => {
-          setIsMouseEnter(false);
-        }, 1000);
+        clearTimeout(timeOutForMouseEnter);
+        setIsMouseEnter(false);
       }}
     >
       <div className="small-film-card__image">
