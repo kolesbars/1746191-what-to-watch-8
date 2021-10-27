@@ -14,36 +14,44 @@ function FilmCard(props: FilmsCardProps): JSX.Element {
   const {id, name, previewImage, previewVideoLink} = film;
 
   const [isMouseEnter, setIsMouseEnter] = useState(false);
-  const [cardView, setCardView] = useState(<img src={previewImage} alt={name} width="280" height="175" />);
+  const [isVideo, setIsVideo] = useState(false);
+  const [timeOutForMouseEnter, setTimeOutForMouseEnter] = useState(setTimeout(() => null, 1000));
 
   useEffect(() => {
     if (isMouseEnter) {
-      setCardView(
-        <VideoPlayer
-          src = {previewVideoLink}
-          isPlaing = {id === props.activeFilm}
-        />);
-    } else {
-      setCardView(<img src={previewImage} alt={name} width="280" height="175" />);
+      setIsVideo(true);
     }
-  }, [isMouseEnter]);
+
+    return () => {
+      setIsVideo(false);
+      clearTimeout(timeOutForMouseEnter);
+    };
+  }, [isMouseEnter, timeOutForMouseEnter]);
 
   return (
-    <article className="small-film-card catalog__films-card" onMouseEnter = {() => {
-      props.setActiveFilm(film.id);
-      setTimeout(() => {
-        setIsMouseEnter(true);
-      }, 1000);
-    }}
+    <article
+      className="small-film-card catalog__films-card"
+      onMouseEnter = {() => {
+        props.setActiveFilm(film.id);
+        const TimeOutId = setTimeout(() => {
+          setIsMouseEnter(true);
+        }, 1000);
+        setTimeOutForMouseEnter(TimeOutId);
+      }}
 
-    onMouseLeave = {() => {
-      setTimeout(() => {
+      onMouseLeave = {() => {
+        props.setActiveFilm(0);
+        clearTimeout(timeOutForMouseEnter);
         setIsMouseEnter(false);
-      }, 1000);
-    }}
+      }}
     >
       <div className="small-film-card__image">
-        {cardView}
+        {isVideo ?
+          <VideoPlayer
+            src = {previewVideoLink}
+            isPlaing = {id === props.activeFilm}
+          /> :
+          <img src={previewImage} alt={name} width="280" height="175" />}
       </div>
       <h3 className="small-film-card__title">
         <Link className="small-film-card__link" to={`/films/${film.id}`}>{name}</Link>
