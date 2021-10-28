@@ -6,6 +6,7 @@ import {AppRoute} from '../../const';
 import GenresList from './genres-list';
 import {connect, ConnectedProps} from 'react-redux';
 import {State} from '../../types/state';
+import Loading from '../loading/loading';
 
 type MainScreenProps = {
   title: string,
@@ -14,8 +15,9 @@ type MainScreenProps = {
   films: FilmType[],
 }
 
-const mapStateToProps = ({filmList}: State) => ({
+const mapStateToProps = ({filmList, isDataLoaded}: State) => ({
   filmList,
+  isDataLoaded,
 });
 
 const connector = connect(mapStateToProps);
@@ -99,9 +101,11 @@ function Main(props: ConnectedComponentProps): JSX.Element {
             films={props.films}
           />
           <div className="catalog__films-list">
-            <FilmList
-              films = {props.filmList}
-            />
+            {props.isDataLoaded ?
+              <FilmList
+                films = {props.filmList}
+              /> :
+              <Loading/>}
           </div>
 
           <div className="catalog__more">

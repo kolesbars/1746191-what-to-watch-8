@@ -2,21 +2,31 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app/app';
 import {films} from './mocks/films';
-import {createStore} from 'redux';
+import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import {reducer} from './store/reducer';
 import {composeWithDevTools} from 'redux-devtools-extension';
+import thunk from 'redux-thunk';
+import {CreateAPI} from './services/api';
+import {AuthorizationStatus} from './const';
+import {fetchFilmsAction} from './store/api-actions';
+import {ThunkAppDispatch} from './types/action';
 
 const promo = {
   title: 'The Grand Budapest Hotel',
   genre: 'Drama',
   date: 2014,
 };
+const api = CreateAPI(() => AuthorizationStatus.Auth);
 
 const store = createStore(
   reducer,
-  composeWithDevTools(),
+  composeWithDevTools(
+    applyMiddleware(thunk.withExtraArgument(api)),
+  ),
 );
+
+(store.dispatch as ThunkAppDispatch)(fetchFilmsAction());
 
 ReactDOM.render(
   <React.StrictMode>
