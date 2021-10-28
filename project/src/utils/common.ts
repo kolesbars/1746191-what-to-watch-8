@@ -1,4 +1,4 @@
-import {FilmType} from '../types/film-type';
+import {FilmType, FilmFromServerType} from '../types/film-type';
 
 const FilterFilmsByGenre = (filmsList: FilmType[] , genre: string): FilmType[] => {
   if (genre === 'All genres') {
@@ -8,7 +8,7 @@ const FilterFilmsByGenre = (filmsList: FilmType[] , genre: string): FilmType[] =
   return filmsList.filter((film) => film.genre === genre);
 };
 
-function adaptToClient(film: FilmType[]): FilmType[] {
+function adaptToClient(film: FilmFromServerType): FilmType {
 
   const adaptedFilm = Object.assign (
     {},
@@ -22,7 +22,7 @@ function adaptToClient(film: FilmType[]): FilmType[] {
       'previewVideoLink': film['preview_video_link'],
       'scoresCount': film['scores_count'],
       'runTime': film['run_time'],
-      'isFavorite': film['if_favorite'],
+      'isFavorite': film['is_favorite'],
     },
   );
 

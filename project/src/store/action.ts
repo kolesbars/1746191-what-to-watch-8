@@ -1,6 +1,6 @@
 import {ActionType} from '../types/action';
 import {films} from '../mocks/films';
-import {FilmType} from '../types/film-type';
+import {FilmFromServerType} from '../types/film-type';
 
 
 export const changeGenre = (genre: string) => ({
@@ -13,7 +13,7 @@ export const filterFilmListByGenre = () => ({
   payload: films,
 } as const);
 
-export const loadFilms = (filmList: FilmType[]) => ({
+export const loadFilms = (filmList: FilmFromServerType[]) => ({
   type: ActionType.LoadFilms,
   payload: {
     filmList,
