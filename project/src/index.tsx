@@ -9,15 +9,19 @@ import {composeWithDevTools} from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import {CreateAPI} from './services/api';
 import {AuthorizationStatus} from './const';
-import {fetchFilmsAction} from './store/api-actions';
+import {fetchFilmsAction, checkAuthAction} from './store/api-actions';
 import {ThunkAppDispatch} from './types/action';
+import {requireAuthorization} from './store/action';
 
 const promo = {
   title: 'The Grand Budapest Hotel',
   genre: 'Drama',
   date: 2014,
 };
-const api = CreateAPI(() => AuthorizationStatus.Auth);
+
+const api = CreateAPI(
+  () => store.dispatch(requireAuthorization(AuthorizationStatus.NoAuth)),
+);
 
 const store = createStore(
   reducer,
@@ -26,6 +30,7 @@ const store = createStore(
   ),
 );
 
+(store.dispatch as ThunkAppDispatch)(checkAuthAction());
 (store.dispatch as ThunkAppDispatch)(fetchFilmsAction());
 
 ReactDOM.render(
