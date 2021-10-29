@@ -1,13 +1,13 @@
 import {ThunkActionResult} from '../types/action';
 import {loadFilms, requireAuthorization} from './action';
 import {APIRoute, AuthorizationStatus} from '../const';
-import {FilmFromServerType} from '../types/film-type';
+import {FilmType} from '../types/film-type';
 import {AuthData} from '../types/auth-data';
 import {Token, saveToken} from '../services/token';
 
 export const fetchFilmsAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
-    const {data} = await api.get<FilmFromServerType[]>(APIRoute.Films);
+    const {data} = await api.get<FilmType[]>(APIRoute.Films);
     dispatch(loadFilms(data));
   };
 

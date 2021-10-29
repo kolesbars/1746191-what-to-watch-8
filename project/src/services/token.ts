@@ -2,11 +2,7 @@ const AUTH_TOKEN_NAME = 'user-token';
 
 export type Token = string;
 
-export const getToken = (): Token => {
-  const token = localStorage.getItem(AUTH_TOKEN_NAME);
-
-  return token ?? '';
-};
+export const getToken = (): Token => localStorage.getItem(AUTH_TOKEN_NAME) ?? '';
 
 export const saveToken = (token: Token): void => {
   localStorage.setItem(AUTH_TOKEN_NAME, token);
