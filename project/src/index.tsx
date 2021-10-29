@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app/app';
-import {films} from './mocks/films';
 import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import {reducer} from './store/reducer';
@@ -40,7 +39,6 @@ ReactDOM.render(
         title = {promo.title}
         genre = {promo.genre}
         date = {promo.date}
-        films = {films}
       />
     </Provider>
   </React.StrictMode>,

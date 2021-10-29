@@ -1,11 +1,14 @@
+import {FilmType} from '../../types/film-type';
+
 type GenreProps ={
   genre: string;
   isActiveGenre: boolean;
   onChangeGenre: (genre: string) => void;
-  onFilterFilmListByGenre: () => void;
+  onFilterFilmListByGenre: (films: FilmType[]) => void;
+  films: FilmType[];
 }
 
-function Genre({genre, isActiveGenre, onChangeGenre, onFilterFilmListByGenre}: GenreProps): JSX.Element {
+function Genre({genre, isActiveGenre, onChangeGenre, onFilterFilmListByGenre, films}: GenreProps): JSX.Element {
   function getGenreName(genreName: string): string {
     switch (genreName) {
       case 'Comedy':
@@ -24,7 +27,7 @@ function Genre({genre, isActiveGenre, onChangeGenre, onFilterFilmListByGenre}: G
       onClick = {(evt) => {
         evt.preventDefault();
         onChangeGenre(genre);
-        onFilterFilmListByGenre();
+        onFilterFilmListByGenre(films);
       }}
     >
       <a href="{url}" className="catalog__genres-link">{getGenreName(genre)}</a>

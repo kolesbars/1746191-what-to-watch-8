@@ -1,5 +1,4 @@
 import {ActionType} from '../types/action';
-import {films} from '../mocks/films';
 import {FilmType} from '../types/film-type';
 import {AuthorizationStatus} from '../const';
 
@@ -9,7 +8,7 @@ export const changeGenre = (genre: string) => ({
   payload: genre,
 } as const);
 
-export const filterFilmListByGenre = () => ({
+export const filterFilmListByGenre = (films: FilmType[]) => ({
   type: ActionType.FilterFilmsByGenre,
   payload: films,
 } as const);
