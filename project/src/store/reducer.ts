@@ -8,6 +8,7 @@ import {AuthorizationStatus} from '../const';
 const initialState: State = {
   genre: 'All genres',
   filmList: [],
+  unfilteredFilms: [],
   isDataLoaded: false,
   authorizationStatus: AuthorizationStatus.Unknown,
 };
@@ -19,9 +20,12 @@ function reducer(state: State = initialState, action: Actions): State {
     case ActionType.FilterFilmsByGenre:
       return {...state, filmList: FilterFilmsByGenre(action.payload, state.genre)};
     case ActionType.LoadFilms:
-      return {...state, isDataLoaded: true, filmList: action.payload.filmList.map(
-        (film: FilmType) => adaptToClient(film),
-      )};
+      return {
+        ...state,
+        isDataLoaded: true,
+        filmList: action.payload.filmList.map((film: FilmType) => adaptToClient(film)),
+        unfilteredFilms: action.payload.filmList.map((film: FilmType) => adaptToClient(film)),
+      };
     case ActionType.RequireAuthorization:
       return {...state, authorizationStatus: action.payload};
     default:
