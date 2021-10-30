@@ -1,4 +1,4 @@
-import {FilmType, FilmFromServerType} from '../types/film-type';
+import {FilmType} from '../types/film-type';
 
 const FilterFilmsByGenre = (filmsList: FilmType[] , genre: string): FilmType[] => {
   if (genre === 'All genres') {
@@ -8,25 +8,36 @@ const FilterFilmsByGenre = (filmsList: FilmType[] , genre: string): FilmType[] =
   return filmsList.filter((film) => film.genre === genre);
 };
 
-function adaptToClient(film: FilmFromServerType): FilmType {
+function adaptToClient(film: FilmType): FilmType {
 
   const adaptedFilm = Object.assign (
     {},
     film,
     {
-      'posterImage': film['poster_image'],
-      'previewImage': film['preview_image'],
-      'backgroundImage': film['background_image'],
-      'backgroundColor': film['background_color'],
-      'videoLink': film['video_link'],
-      'previewVideoLink': film['preview_video_link'],
-      'scoresCount': film['scores_count'],
-      'runTime': film['run_time'],
-      'isFavorite': film['is_favorite'],
+      posterImage: film['poster_image'],
+      previewImage: film['preview_image'],
+      backgroundImage: film['background_image'],
+      backgroundColor: film['background_color'],
+      videoLink: film['video_link'],
+      previewVideoLink: film['preview_video_link'],
+      scoresCount: film['scores_count'],
+      runTime: film['run_time'],
+      isFavorite: film['is_favorite'],
     },
   );
 
+  delete adaptedFilm['poster_image'];
+  delete adaptedFilm['preview_image'];
+  delete adaptedFilm['background_image'];
+  delete adaptedFilm['background_color'];
+  delete adaptedFilm['video_link'];
+  delete adaptedFilm['preview_video_link'];
+  delete adaptedFilm['scores_count'];
+  delete adaptedFilm['run_time'];
+  delete adaptedFilm['is_favorite'];
+
   return adaptedFilm;
+
 }
 
 export {FilterFilmsByGenre, adaptToClient};

@@ -57,4 +57,5 @@ function GenresList(props: ConnectedComponentProps): JSX.Element {
   );
 }
 
+export {GenresList};
 export default connector(GenresList);

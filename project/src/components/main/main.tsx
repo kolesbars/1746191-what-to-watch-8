@@ -2,11 +2,12 @@ import {FilmList} from '../film-list/film-list';
 import {FilmType} from '../../types/film-type';
 import {useHistory} from 'react-router-dom';
 import {Link} from 'react-router-dom';
-import {AppRoute} from '../../const';
+import {AppRoute, AuthorizationStatus} from '../../const';
 import GenresList from './genres-list';
 import {connect, ConnectedProps} from 'react-redux';
 import {State} from '../../types/state';
 import Loading from '../loading/loading';
+import Footer from '../footer/footer';
 
 type MainScreenProps = {
   title: string,
@@ -15,9 +16,10 @@ type MainScreenProps = {
   films: FilmType[],
 }
 
-const mapStateToProps = ({filmList, isDataLoaded}: State) => ({
+const mapStateToProps = ({filmList, isDataLoaded, authorizationStatus}: State) => ({
   filmList,
   isDataLoaded,
+  authorizationStatus,
 });
 
 const connector = connect(mapStateToProps);
@@ -49,11 +51,15 @@ function Main(props: ConnectedComponentProps): JSX.Element {
           <ul className="user-block">
             <li className="user-block__item">
               <div className="user-block__avatar">
-                <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
+                {props.authorizationStatus === AuthorizationStatus.NoAuth ?
+                  <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /> :
+                  ''}
               </div>
             </li>
             <li className="user-block__item">
-              <Link className="user-block__link" to="/login">Sign out</Link>
+              {props.authorizationStatus === AuthorizationStatus.NoAuth ?
+                <Link className="user-block__link" to="/login">@mail.ru</Link> :
+                <Link className="user-block__link" to="/login">Sign in</Link>}
             </li>
           </ul>
         </header>
@@ -112,22 +118,10 @@ function Main(props: ConnectedComponentProps): JSX.Element {
             <button className="catalog__button" type="button">Show more</button>
           </div>
         </section>
-
-        <footer className="page-footer">
-          <div className="logo">
-            <Link className="logo__link logo__link--light" to="/">
-              <span className="logo__letter logo__letter--1">W</span>
-              <span className="logo__letter logo__letter--2">T</span>
-              <span className="logo__letter logo__letter--3">W</span>
-            </Link>
-          </div>
-
-          <div className="copyright">
-            <p>© 2019 What to watch Ltd.</p>
-          </div>
-        </footer>
+        <Footer/>
       </div>
     </>);
 }
 
+export {Main};
 export default connector(Main);

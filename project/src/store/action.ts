@@ -1,6 +1,7 @@
 import {ActionType} from '../types/action';
 import {films} from '../mocks/films';
-import {FilmFromServerType} from '../types/film-type';
+import {FilmType} from '../types/film-type';
+import {AuthorizationStatus} from '../const';
 
 
 export const changeGenre = (genre: string) => ({
@@ -13,9 +14,15 @@ export const filterFilmListByGenre = () => ({
   payload: films,
 } as const);
 
-export const loadFilms = (filmList: FilmFromServerType[]) => ({
+export const loadFilms = (filmList: FilmType[]) => ({
   type: ActionType.LoadFilms,
   payload: {
     filmList,
   },
-}as const);
+} as const);
+
+export const requireAuthorization = (authStatus: AuthorizationStatus) => ({
+  type: ActionType.RequireAuthorization,
+  payload: authStatus,
+} as const);
+

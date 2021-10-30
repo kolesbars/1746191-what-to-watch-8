@@ -5,7 +5,7 @@ import Film from '../film/film';
 import AddReview from '../add-review/add-review';
 import Player from '../player/player';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
-import {AppRoute, AuthorizationStatus} from '../../const';
+import {AppRoute} from '../../const';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
 import PrivateRoute from '../private-route/private-route';
 import {FilmType} from '../../types/film-type';
@@ -36,7 +36,6 @@ function App({title, genre, date, films}: AppProps): JSX.Element {
           path = {AppRoute.MyList}
           exact
           render = {() => <MyList films = {films}/>}
-          authorizationStatus={AuthorizationStatus.Auth}
         >
         </PrivateRoute>
         <Route path = {AppRoute.Film} exact>

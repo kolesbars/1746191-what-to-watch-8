@@ -28,10 +28,14 @@ function VideoPlayer(props: VideoPlayerProps): JSX.Element {
 
   useEffect(() => {
     if (videoRef.current !== null && isPlaing) {
-      videoRef.current.play();
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          .catch(() => {});
+      }
     }
   });
-
   return (
     <video src={src} ref={videoRef} muted></video>
   );
