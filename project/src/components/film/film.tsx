@@ -3,6 +3,7 @@ import {FilmList} from '../film-list/film-list';
 import {Link} from 'react-router-dom';
 import {useHistory} from 'react-router-dom';
 import {AppRoute} from '../../const';
+import FilmDetails from './film-details';
 
 type FilmProps = {
   films: FilmType[]
@@ -16,11 +17,7 @@ function Film(props: FilmProps): JSX.Element {
     genre,
     released,
     posterImage,
-    rating,
-    scoresCount,
-    description,
-    director,
-    starring,
+    id,
   } = films[0];
 
   const history = useHistory();
@@ -91,38 +88,9 @@ function Film(props: FilmProps): JSX.Element {
             <div className="film-card__poster film-card__poster--big">
               <img src={posterImage} alt={name} width="218" height="327" />
             </div>
-
-            <div className="film-card__desc">
-              <nav className="film-nav film-card__nav">
-                <ul className="film-nav__list">
-                  <li className="film-nav__item film-nav__item--active">
-                    <a href="{url}" className="film-nav__link">Overview</a>
-                  </li>
-                  <li className="film-nav__item">
-                    <a href="{url}" className="film-nav__link">Details</a>
-                  </li>
-                  <li className="film-nav__item">
-                    <a href="{url}" className="film-nav__link">Reviews</a>
-                  </li>
-                </ul>
-              </nav>
-
-              <div className="film-rating">
-                <div className="film-rating__score">{rating}</div>
-                <p className="film-rating__meta">
-                  <span className="film-rating__level">Very good</span>
-                  <span className="film-rating__count">{scoresCount} ratings</span>
-                </p>
-              </div>
-
-              <div className="film-card__text">
-                {description}
-
-                <p className="film-card__director"><strong>Director: {director}</strong></p>
-
-                <p className="film-card__starring"><strong>Starring: {starring.join(',')}</strong></p>
-              </div>
-            </div>
+            <FilmDetails
+              data = {films[0]}
+            />
           </div>
         </div>
       </section>
@@ -133,7 +101,7 @@ function Film(props: FilmProps): JSX.Element {
 
           <div className="catalog__films-list">
             <FilmList
-              films = {props.films.slice(4)}
+              films = {films.filter((film) => film.genre === genre && film.id !== id).slice(0, 4)}
             />
           </div>
         </section>
