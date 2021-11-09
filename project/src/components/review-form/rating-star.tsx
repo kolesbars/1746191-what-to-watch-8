@@ -1,3 +1,5 @@
+import {memo} from 'react';
+
 type RatingStarsProps = {
   number: number
 }
@@ -12,4 +14,4 @@ function RatingStar(props: RatingStarsProps): JSX.Element {
   );
 }
 
-export default RatingStar;
+export default memo(RatingStar);

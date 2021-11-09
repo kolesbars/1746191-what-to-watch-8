@@ -1,10 +1,11 @@
 import {useState, BaseSyntheticEvent} from 'react';
 import RatingStar from './rating-star';
+import {memo} from 'react';
 
 function getRatingStars(): JSX.Element[] {
   const stars = [];
   for (let i = 10; i>0; i--) {
-    stars.push(<RatingStar number = {i}/>);
+    stars.push(<RatingStar number = {i} key={`${i}-star`}/>);
   }
   return stars;
 }
@@ -41,5 +42,5 @@ function ReviewForm(): JSX.Element {
   );
 }
 
-export default ReviewForm;
+export default memo(ReviewForm);
 

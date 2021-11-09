@@ -4,12 +4,13 @@ import {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import GenresList from './genres-list';
-import {connect, ConnectedProps} from 'react-redux';
-import {State} from '../../types/state';
+import {useSelector, useDispatch} from 'react-redux';
 import Loading from '../loading/loading';
 import Footer from '../footer/footer';
 import ShowMoreButton from './show-more-button';
 import {FilmType} from '../../types/film-type';
+import {logoutAction} from '../../store/api-actions';
+import {getGenre, getUnfilteredFilms, getLoadedDataStatus, getAuthorizationStatus} from '../../store/selectors';
 
 const FILMS_COUNT = 8;
 
@@ -20,26 +21,26 @@ type MainScreenProps = {
   films: FilmType[],
 }
 
-const mapStateToProps = ({genre, isDataLoaded, authorizationStatus, unfilteredFilms}: State) => ({
-  genre,
-  unfilteredFilms,
-  isDataLoaded,
-  authorizationStatus,
-});
+function Main(props: MainScreenProps): JSX.Element {
+  const {title, promoGenre, date, films} = props;
 
-const connector = connect(mapStateToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux & MainScreenProps;
-
-function Main(props: ConnectedComponentProps): JSX.Element {
+  const genre = useSelector(getGenre);
+  const unfilteredFilms = useSelector(getUnfilteredFilms);
+  const isDataLoaded = useSelector(getLoadedDataStatus);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
   const history = useHistory();
+
+  const  dispatch = useDispatch();
+
+  const logout = () => {
+    dispatch(logoutAction());
+  };
 
   const [filmsCount, setFilmsCount] = useState(FILMS_COUNT);
 
   useEffect(() => {
     setFilmsCount(FILMS_COUNT);
-  }, [props.genre, history.location.pathname]);
+  }, [genre, history.location.pathname]);
 
   return (
     <>
@@ -62,14 +63,23 @@ function Main(props: ConnectedComponentProps): JSX.Element {
           <ul className="user-block">
             <li className="user-block__item">
               <div className="user-block__avatar">
-                {props.authorizationStatus === AuthorizationStatus.NoAuth ?
-                  <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /> :
-                  ''}
+                <Link to="/myList">
+                  <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
+                </Link>
               </div>
             </li>
             <li className="user-block__item">
-              {props.authorizationStatus === AuthorizationStatus.Auth ?
-                <Link className="user-block__link" to="/login">@mail.ru</Link> :
+              {authorizationStatus === AuthorizationStatus.Auth ?
+                <Link
+                  className="user-block__link"
+                  to="/"
+                  onClick={(evt) => {
+                    evt.preventDefault();
+                    logout();
+                  }}
+                >
+                  Sign out
+                </Link> :
                 <Link className="user-block__link" to="/login">Sign in</Link>}
             </li>
           </ul>
@@ -82,10 +92,10 @@ function Main(props: ConnectedComponentProps): JSX.Element {
             </div>
 
             <div className="film-card__desc">
-              <h2 className="film-card__title">{props.title}</h2>
+              <h2 className="film-card__title">{title}</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{props.promoGenre}</span>
-                <span className="film-card__year">{props.date}</span>
+                <span className="film-card__genre">{promoGenre}</span>
+                <span className="film-card__year">{date}</span>
               </p>
 
               <div className="film-card__buttons">
@@ -115,17 +125,17 @@ function Main(props: ConnectedComponentProps): JSX.Element {
         <section className="catalog">
           <h2 className="catalog__title visually-hidden">Catalog</h2>
           <GenresList
-            films={props.unfilteredFilms}
+            films={unfilteredFilms}
           />
           <div className="catalog__films-list">
-            {props.isDataLoaded ?
+            {isDataLoaded ?
               <FilmList
-                films = {props.films.slice(0, filmsCount)}
+                films = {films.slice(0, filmsCount)}
               /> :
               <Loading/>}
           </div>
           {
-            filmsCount <= props.films.length ?
+            filmsCount <= films.length ?
               <ShowMoreButton
                 filmCount = {filmsCount}
                 inc = {FILMS_COUNT}
@@ -138,5 +148,4 @@ function Main(props: ConnectedComponentProps): JSX.Element {
     </>);
 }
 
-export {Main};
-export default connector(Main);
+export default Main;

@@ -6,10 +6,11 @@ import AddReview from '../add-review/add-review';
 import Player from '../player/player';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
 import {AppRoute} from '../../const';
-import {BrowserRouter, Switch, Route} from 'react-router-dom';
+import {Switch, Route, Router as BrowserRouter} from 'react-router-dom';
 import PrivateRoute from '../private-route/private-route';
-import {connect, ConnectedProps} from 'react-redux';
-import {State} from '../../types/state';
+import {useSelector} from 'react-redux';
+import {getFilmList} from '../../store/selectors';
+import browserHistory from '../../browser-history';
 
 type AppProps = {
   title: string,
@@ -17,18 +18,11 @@ type AppProps = {
   date: number,
 }
 
-const mapStateToProps = ({filmList}: State) => ({
-  filmList,
-});
+function App({title, genre, date}: AppProps): JSX.Element {
+  const filmList = useSelector(getFilmList);
 
-const connector = connect(mapStateToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux & AppProps;
-
-function App({title, genre, date, filmList}: ConnectedComponentProps): JSX.Element {
   return (
-    <BrowserRouter>
+    <BrowserRouter history={browserHistory}>
       <Switch>
         <Route path = {AppRoute.Main} exact>
           <Main
@@ -47,13 +41,16 @@ function App({title, genre, date, filmList}: ConnectedComponentProps): JSX.Eleme
           render = {() => <MyList films = {filmList}/>}
         >
         </PrivateRoute>
+        <PrivateRoute
+          path = {AppRoute.AddReview}
+          exact
+          render = {() => <AddReview films = {filmList}/>}
+        >
+        </PrivateRoute>
         <Route path = {AppRoute.Film} exact>
           <Film
             films = {filmList}
           />
-        </Route>
-        <Route path = {AppRoute.AddReview} exact>
-          <AddReview films = {filmList}/>
         </Route>
         <Route path = {AppRoute.Player} exact>
           <Player
@@ -68,5 +65,4 @@ function App({title, genre, date, filmList}: ConnectedComponentProps): JSX.Eleme
   );
 }
 
-export {App};
-export default connector(App);
+export default App;
