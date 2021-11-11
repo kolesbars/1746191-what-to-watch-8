@@ -1,27 +1,33 @@
 import {ActionType} from '../types/action';
 import {FilmType} from '../types/film-type';
 import {AuthorizationStatus} from '../const';
+import {createAction} from '@reduxjs/toolkit';
 
 
-export const changeGenre = (genre: string) => ({
-  type: ActionType.ChangeGenre,
-  payload: genre,
-} as const);
+export const changeGenre = createAction(
+  ActionType.ChangeGenre,
+  (genre: string) => ({
+    payload: genre,
+  }));
 
-export const filterFilmListByGenre = (films: FilmType[]) => ({
-  type: ActionType.FilterFilmsByGenre,
-  payload: films,
-} as const);
+export const filterFilmListByGenre = createAction(
+  ActionType.FilterFilmsByGenre,
+  (films: FilmType[]) => ({
+    payload: films,
+  }));
 
-export const loadFilms = (filmList: FilmType[]) => ({
-  type: ActionType.LoadFilms,
-  payload: {
-    filmList,
-  },
-} as const);
+export const loadFilms = createAction(
+  ActionType.LoadFilms,
+  (filmList: FilmType[]) => ({
+    payload: {
+      filmList,
+    },
+  }));
 
-export const requireAuthorization = (authStatus: AuthorizationStatus) => ({
-  type: ActionType.RequireAuthorization,
-  payload: authStatus,
-} as const);
+export const requireAuthorization = createAction(
+  ActionType.RequireAuthorization,
+  (authStatus: AuthorizationStatus) => ({
+    payload: authStatus,
+  }));
 
+export const requireLogout = createAction(ActionType.RequireLogout);
