@@ -1,14 +1,16 @@
 import {Link} from 'react-router-dom';
-import {FilmType} from '../../types/film-type';
 import ReviewForm from '../../components/review-form/review-form';
+import {useSelector} from 'react-redux';
+import {getFilmData} from '../../store/selectors';
+import {AxiosInstance} from 'axios';
 
 type AddReviewProps = {
-  films: FilmType[]
+  api: AxiosInstance
 }
 
-function AddReview(props: AddReviewProps): JSX.Element {
-  const {films} = props;
-  const {name, backgroundImage, id, posterImage} = films[0];
+function AddReview({api}: AddReviewProps): JSX.Element {
+  const filmData = useSelector(getFilmData);
+  const {name, backgroundImage, id, posterImage} = filmData;
 
   return (
     <section className="film-card film-card--full">
@@ -55,7 +57,9 @@ function AddReview(props: AddReviewProps): JSX.Element {
           <img src={posterImage} alt={name} width="218" height="327" />
         </div>
       </div>
-      <ReviewForm/>
+      <ReviewForm
+        api = {api}
+      />
     </section>
   );
 }

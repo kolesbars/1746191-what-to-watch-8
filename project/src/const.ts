@@ -15,6 +15,37 @@ export enum AuthorizationStatus {
 
 export enum APIRoute {
   Films = '/films',
+  Comments = '/comments',
   Login = '/login',
   Logout = '/logout'
 }
+
+export const emptyFilm = {
+  'id': 1,
+  'name': '',
+  'posterImage': '',
+  'previewImage': '',
+  'backgroundImage': '',
+  'backgroundColor': '',
+  'videoLink': '',
+  'previewVideoLink': '',
+  'description': '',
+  'rating': 0,
+  'scoresCount': 0,
+  'director': '',
+  'starring': [''],
+  'runTime': 0,
+  'genre': 'Comedy',
+  'released': 0,
+  'isFavorite': false};
+
+export const emptyComment = {
+  'id': 0,
+  'user': {
+    'id': 0,
+    'name': '',
+  },
+  'rating': 0,
+  'comment': '',
+  'date': '',
+};

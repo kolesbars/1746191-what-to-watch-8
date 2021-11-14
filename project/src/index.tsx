@@ -43,6 +43,7 @@ ReactDOM.render(
         title = {promo.title}
         genre = {promo.genre}
         date = {promo.date}
+        api = {api}
       />
     </Provider>
   </React.StrictMode>,

@@ -11,14 +11,16 @@ import PrivateRoute from '../private-route/private-route';
 import {useSelector} from 'react-redux';
 import {getFilmList} from '../../store/selectors';
 import browserHistory from '../../browser-history';
+import {AxiosInstance} from 'axios';
 
 type AppProps = {
   title: string,
   genre: string,
   date: number,
+  api: AxiosInstance,
 }
 
-function App({title, genre, date}: AppProps): JSX.Element {
+function App({title, genre, date, api}: AppProps): JSX.Element {
   const filmList = useSelector(getFilmList);
 
   return (
@@ -44,12 +46,16 @@ function App({title, genre, date}: AppProps): JSX.Element {
         <PrivateRoute
           path = {AppRoute.AddReview}
           exact
-          render = {() => <AddReview films = {filmList}/>}
+          render = {() =>
+            (
+              <AddReview
+                api = {api}
+              />)}
         >
         </PrivateRoute>
         <Route path = {AppRoute.Film} exact>
           <Film
-            films = {filmList}
+            api = {api}
           />
         </Route>
         <Route path = {AppRoute.Player} exact>

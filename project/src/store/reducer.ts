@@ -4,11 +4,24 @@ import {adaptToClient} from '../utils/common';
 import {FilmType} from '../types/film-type';
 import {AuthorizationStatus} from '../const';
 import {createReducer} from '@reduxjs/toolkit';
-import {changeGenre, filterFilmListByGenre, loadFilms, requireAuthorization, requireLogout} from '../store/action';
+import {emptyFilm, emptyComment} from '../const';
+import {
+  changeGenre,
+  filterFilmListByGenre,
+  loadFilms,
+  loadCurrentFilm,
+  requireAuthorization,
+  requireLogout,
+  updateFilmId,
+  updateComments
+} from '../store/action';
 
 const initialState: State = {
+  currentFilmId: 0,
+  currentFilmComments: [emptyComment],
   genre: 'All genres',
   filmList: [],
+  currentFilm: emptyFilm,
   unfilteredFilms: [],
   isDataLoaded: false,
   authorizationStatus: AuthorizationStatus.Unknown,
@@ -19,6 +32,12 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(changeGenre, (state, action) => {
       state.genre = action.payload;
     })
+    .addCase(updateFilmId, (state, action) => {
+      state.currentFilmId = action.payload;
+    })
+    .addCase(updateComments, (state, action) => {
+      state.currentFilmComments = action.payload;
+    })
     .addCase(filterFilmListByGenre, (state, action) => {
       state.filmList = FilterFilmsByGenre(action.payload, state.genre);
     })
@@ -26,6 +45,9 @@ const reducer = createReducer(initialState, (builder) => {
       state.isDataLoaded = true;
       state.filmList = action.payload.filmList.map((film: FilmType) => adaptToClient(film));
       state.unfilteredFilms = action.payload.filmList.map((film: FilmType) => adaptToClient(film));
+    })
+    .addCase(loadCurrentFilm, (state, action) => {
+      state.currentFilm = adaptToClient(action.payload);
     })
     .addCase(requireAuthorization, (state, action) => {
       state.authorizationStatus = action.payload;
