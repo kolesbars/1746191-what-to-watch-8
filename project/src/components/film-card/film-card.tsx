@@ -1,9 +1,7 @@
 import {FilmType} from '../../types/film-type';
-import {Link} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import VideoPlayer from './videoplayer';
-import {updateFilmId} from '../../store/action';
-import {useDispatch} from 'react-redux';
 
 type FilmsCardProps = {
   film: FilmType
@@ -13,17 +11,13 @@ type FilmsCardProps = {
 
 function FilmCard(props: FilmsCardProps): JSX.Element {
   const {film} = props;
-  const {id, name, previewImage, previewVideoLink} = film;
+  const {name, previewImage, previewVideoLink} = film;
 
+  const {id} = useParams<{id: string}>();
+  const currentId = +id;
   const [isMouseEnter, setIsMouseEnter] = useState(false);
   const [isVideo, setIsVideo] = useState(false);
   const [timeOutForMouseEnter, setTimeOutForMouseEnter] = useState(setTimeout(() => null, 1000));
-
-  const dispatch = useDispatch();
-
-  const onUpdateFilmId = (currentFilmId: number) => {
-    dispatch(updateFilmId(currentFilmId));
-  };
 
   useEffect(() => {
     if (isMouseEnter) {
@@ -40,7 +34,7 @@ function FilmCard(props: FilmsCardProps): JSX.Element {
     <article
       className="small-film-card catalog__films-card"
       onMouseEnter = {() => {
-        props.setActiveFilm(id);
+        props.setActiveFilm(currentId);
         const TimeOutId = setTimeout(() => {
           setIsMouseEnter(true);
         }, 1000);
@@ -55,14 +49,13 @@ function FilmCard(props: FilmsCardProps): JSX.Element {
 
       onClick = {(evt) => {
         evt.preventDefault();
-        onUpdateFilmId(id);
       }}
     >
       <div className="small-film-card__image">
         {isVideo ?
           <VideoPlayer
             src = {previewVideoLink}
-            isPlaing = {id === props.activeFilm}
+            isPlaing = {currentId === props.activeFilm}
           /> :
           <img src={previewImage} alt={name} width="280" height="175" />}
       </div>

@@ -54,14 +54,15 @@ function App({title, genre, date, api}: AppProps): JSX.Element {
         >
         </PrivateRoute>
         <Route path = {AppRoute.Film} exact>
-          <Film
-            api = {api}
-          />
+          <Film api = {api}/>
         </Route>
         <Route path = {AppRoute.Player} exact>
           <Player
             films = {filmList}
           />
+        </Route>
+        <Route path = {AppRoute.NotFoundScreen}>
+          <NotFoundScreen/>
         </Route>
         <Route>
           <NotFoundScreen/>

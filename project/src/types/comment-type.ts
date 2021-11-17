@@ -1,4 +1,4 @@
-export type GetCommentType = {
+export type CommentType = {
   'id': number,
   'user': {
     'id': number,
@@ -8,8 +8,3 @@ export type GetCommentType = {
   'comment': string,
   'date': string,
 };
-
-export type PostCommentType = {
-  rating: number,
-  comment: string,
-}

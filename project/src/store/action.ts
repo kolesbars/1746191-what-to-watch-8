@@ -2,7 +2,7 @@ import {ActionType} from '../types/action';
 import {FilmType} from '../types/film-type';
 import {AuthorizationStatus} from '../const';
 import {createAction} from '@reduxjs/toolkit';
-import {GetCommentType} from '../types/comment-type';
+import {CommentType} from '../types/comment-type';
 
 
 export const changeGenre = createAction(
@@ -11,15 +11,9 @@ export const changeGenre = createAction(
     payload: genre,
   }));
 
-export const updateFilmId = createAction(
-  ActionType.UpdateFilmId,
-  (id: number) => ({
-    payload: id,
-  }));
-
 export const updateComments = createAction(
   ActionType.UpdateComments,
-  (comments: GetCommentType[]) => ({
+  (comments: CommentType[]) => ({
     payload: comments,
   }));
 

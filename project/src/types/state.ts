@@ -1,10 +1,9 @@
 import {FilmType} from './film-type';
-import {GetCommentType} from './comment-type';
+import {CommentType} from './comment-type';
 import {AuthorizationStatus} from '../const';
 
 export type State = {
-  currentFilmId: number,
-  currentFilmComments: GetCommentType[],
+  currentFilmComments: CommentType[],
   genre: string,
   filmList: FilmType[],
   currentFilm: FilmType,

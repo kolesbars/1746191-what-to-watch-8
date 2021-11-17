@@ -1,8 +1,8 @@
-import {GetCommentType} from '../../types/comment-type';
+import {CommentType} from '../../types/comment-type';
 import dayjs from 'dayjs';
 
 type CommentProps = {
-  commentData: GetCommentType;
+  commentData: CommentType;
 }
 
 function Comment ({commentData}: CommentProps):JSX.Element {

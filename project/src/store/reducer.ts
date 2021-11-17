@@ -12,12 +12,10 @@ import {
   loadCurrentFilm,
   requireAuthorization,
   requireLogout,
-  updateFilmId,
   updateComments
 } from '../store/action';
 
 const initialState: State = {
-  currentFilmId: 0,
   currentFilmComments: [emptyComment],
   genre: 'All genres',
   filmList: [],
@@ -31,9 +29,6 @@ const reducer = createReducer(initialState, (builder) => {
   builder
     .addCase(changeGenre, (state, action) => {
       state.genre = action.payload;
-    })
-    .addCase(updateFilmId, (state, action) => {
-      state.currentFilmId = action.payload;
     })
     .addCase(updateComments, (state, action) => {
       state.currentFilmComments = action.payload;

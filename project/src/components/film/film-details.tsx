@@ -1,11 +1,12 @@
+/* eslint-disable no-console */
 import {FilmType} from '../../types/film-type';
-import {GetCommentType} from '../../types/comment-type';
+import {CommentType} from '../../types/comment-type';
 import {useState} from 'react';
 import Comment from './comment';
 
 type FilmDetailsProps = {
   data: FilmType,
-  comments: GetCommentType[]
+  comments: CommentType[]
 }
 
 const getRatingName = (rating: number) => {
@@ -33,6 +34,17 @@ function FilmDetails(props: FilmDetailsProps): JSX.Element {
   const {rating, scoresCount, description, director, starring, runTime, genre, released} = data;
 
   const [currentTab, setTab] = useState('Overview');
+
+  const oddComments: CommentType[] = [];
+  const evenComments: CommentType[] = [];
+
+  comments.forEach((e,i) => {
+    if (!(i%2)) {
+      oddComments.push(e);
+    } else {
+      evenComments.push(e);
+    }
+  });
 
   return (
     <div className="film-card__desc">
@@ -121,24 +133,18 @@ function FilmDetails(props: FilmDetailsProps): JSX.Element {
       {currentTab === 'Reviews' &&
       <div className="film-card__reviews film-card__row">
         <div className="film-card__reviews-col">
-          {comments.filter((e,i )=> !(i%2)).map((comment) => {
-            const keyValue = comment.id;
-            return (
-              <Comment
-                key = {keyValue}
-                commentData = {comment}
-              />);
-          })}
+          {oddComments.map((comment) => (
+            <Comment
+              key = {comment.id}
+              commentData = {comment}
+            />))}
         </div>
         <div className="film-card__reviews-col">
-          {comments.filter((e,i )=> (i%2)).map((comment) => {
-            const keyValue = comment.id;
-            return (
-              <Comment
-                key = {keyValue}
-                commentData = {comment}
-              />);
-          })}
+          {evenComments.map((comment) => (
+            <Comment
+              key = {comment.id}
+              commentData = {comment}
+            />))}
         </div>
       </div>}
     </div>

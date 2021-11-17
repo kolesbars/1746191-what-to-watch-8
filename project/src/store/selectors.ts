@@ -8,4 +8,3 @@ export const getLoadedDataStatus = (state: State): boolean => state.isDataLoaded
 export const getUnfilteredFilms = (state: State): FilmType[] => state.unfilteredFilms;
 export const getGenre = (state: State): string => state.genre;
 export const getAuthorizationStatus = (state: State): AuthorizationStatus => state.authorizationStatus;
-export const getCurrentFIlmId = (state: State): number => state.currentFilmId;

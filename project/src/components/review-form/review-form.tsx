@@ -2,21 +2,27 @@ import {useState, BaseSyntheticEvent} from 'react';
 import RatingStar from './rating-star';
 import {memo} from 'react';
 import {AxiosInstance} from 'axios';
-import {GetCommentType} from '../../types/comment-type';
+import {CommentType} from '../../types/comment-type';
 import {APIRoute} from '../../const';
 import {updateComments} from '../../store/action';
-import {useSelector, useDispatch} from 'react-redux';
-import {getCurrentFIlmId} from '../../store/selectors';
+import {useDispatch} from 'react-redux';
 import {toast} from 'react-toastify';
+import {useParams, useHistory} from 'react-router-dom';
 
 type ReviewFormProps = {
   api: AxiosInstance
+}
+
+enum ReviewLength {
+  Max = 400,
+  Min = 50,
 }
 
 const ERROR_MESSAGE = 'Комментарий не отправлен';
 
 function getRatingStars(isDisabled: boolean): JSX.Element[] {
   const stars = [];
+
   for (let i = 10; i>0; i--) {
     stars.push(
       <RatingStar
@@ -34,15 +40,19 @@ function ReviewForm({api}: ReviewFormProps): JSX.Element {
   const [comment, setComment] = useState('');
   const [isDisabled, setIsDisabled] = useState(false);
 
-  const filmId = useSelector(getCurrentFIlmId);
+  const history = useHistory();
+
+  const {id} = useParams<{id: string}>();
+
+  const currentId = +id;
 
   const dispatch = useDispatch();
 
-  const addComment = async (id: number): Promise<void> => {
+  const addComment = async (filmId: number): Promise<void> => {
     try {
-      const {data} = await api.post<GetCommentType[]>(`${APIRoute.Comments}/${id}`, {rating, comment});
+      const {data} = await api.post<CommentType[]>(`${APIRoute.Comments}/${filmId}`, {rating, comment});
       dispatch(updateComments(data));
-      window.history.back();
+      history.goBack();
     } catch (error) {
       setIsDisabled(false);
       toast.info(ERROR_MESSAGE);
@@ -56,7 +66,7 @@ function ReviewForm({api}: ReviewFormProps): JSX.Element {
         onSubmit={(evt) => {
           evt.preventDefault();
           setIsDisabled(true);
-          addComment(filmId);
+          addComment(currentId);
         }}
       >
         <div className="rating">
@@ -73,12 +83,14 @@ function ReviewForm({api}: ReviewFormProps): JSX.Element {
           <textarea
             disabled = {isDisabled}
             className="add-review__textarea"
-            name="review-text" id="review-text"
+            name="review-text"
+            id="review-text"
             placeholder="Review text"
-            minLength={50}
-            maxLength={400}
+            minLength={ReviewLength.Min}
+            maxLength={ReviewLength.Max}
             onInput={({target}: BaseSyntheticEvent) => {
-              setComment(target.value);}}
+              setComment(target.value);
+            }}
           >
           </textarea>
           <div className="add-review__submit">

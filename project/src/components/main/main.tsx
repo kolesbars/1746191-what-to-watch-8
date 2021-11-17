@@ -1,16 +1,15 @@
 import {FilmList} from '../film-list/film-list';
 import {useHistory} from 'react-router-dom';
 import {useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
-import {AppRoute, AuthorizationStatus} from '../../const';
+import {AppRoute} from '../../const';
 import GenresList from './genres-list';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import Loading from '../loading/loading';
+import Header from '../header/header';
 import Footer from '../footer/footer';
 import ShowMoreButton from './show-more-button';
 import {FilmType} from '../../types/film-type';
-import {logoutAction} from '../../store/api-actions';
-import {getGenre, getUnfilteredFilms, getLoadedDataStatus, getAuthorizationStatus} from '../../store/selectors';
+import {getGenre, getUnfilteredFilms, getLoadedDataStatus} from '../../store/selectors';
 
 const FILMS_COUNT = 8;
 
@@ -27,14 +26,7 @@ function Main(props: MainScreenProps): JSX.Element {
   const genre = useSelector(getGenre);
   const unfilteredFilms = useSelector(getUnfilteredFilms);
   const isDataLoaded = useSelector(getLoadedDataStatus);
-  const authorizationStatus = useSelector(getAuthorizationStatus);
   const history = useHistory();
-
-  const  dispatch = useDispatch();
-
-  const logout = () => {
-    dispatch(logoutAction());
-  };
 
   const [filmsCount, setFilmsCount] = useState(FILMS_COUNT);
 
@@ -50,41 +42,7 @@ function Main(props: MainScreenProps): JSX.Element {
         </div>
 
         <h1 className="visually-hidden">WTW</h1>
-
-        <header className="page-header film-card__head">
-          <div className="logo">
-            <Link className="logo__link" to="/">
-              <span className="logo__letter logo__letter--1">W</span>
-              <span className="logo__letter logo__letter--2">T</span>
-              <span className="logo__letter logo__letter--3">W</span>
-            </Link>
-          </div>
-
-          <ul className="user-block">
-            <li className="user-block__item">
-              <div className="user-block__avatar">
-                <Link to="/myList">
-                  <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-                </Link>
-              </div>
-            </li>
-            <li className="user-block__item">
-              {authorizationStatus === AuthorizationStatus.Auth ?
-                <Link
-                  className="user-block__link"
-                  to="/"
-                  onClick={(evt) => {
-                    evt.preventDefault();
-                    logout();
-                  }}
-                >
-                  Sign out
-                </Link> :
-                <Link className="user-block__link" to="/login">Sign in</Link>}
-            </li>
-          </ul>
-        </header>
-
+        <Header/>
         <div className="film-card__wrap">
           <div className="film-card__info">
             <div className="film-card__poster">
