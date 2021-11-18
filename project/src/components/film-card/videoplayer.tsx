@@ -1,4 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
+import {toast} from 'react-toastify';
+
+const VIDEO_FAIL_MESSAGE = 'Не удалось загрузить видео';
 
 type VideoPlayerProps = {
   src: string
@@ -9,7 +12,7 @@ function VideoPlayer(props: VideoPlayerProps): JSX.Element {
 
   const {src, isPlaing} = props;
 
-  const [, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -24,18 +27,18 @@ function VideoPlayer(props: VideoPlayerProps): JSX.Element {
         videoRef.current = null;
       }
     };
-  }, [src]);
+  }, []);
 
   useEffect(() => {
-    if (videoRef.current !== null && isPlaing) {
+    if (videoRef.current !== null && isPlaing && !isLoading) {
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
         playPromise
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          .catch(() => {});
+          .catch(() => toast.info(VIDEO_FAIL_MESSAGE));
       }
     }
   });
+
   return (
     <video src={src} ref={videoRef} muted></video>
   );

@@ -4,7 +4,7 @@ export enum AppRoute {
   MyList = '/mylist',
   Film ='/films/:id',
   AddReview = '/films/:id/review',
-  Player = '/player/:id',
+  Player = '/player',
   NotFoundScreen = '/notfound'
 }
 
@@ -18,7 +18,9 @@ export enum APIRoute {
   Films = '/films',
   Comments = '/comments',
   Login = '/login',
-  Logout = '/logout'
+  Logout = '/logout',
+  Promo = '/promo',
+  Favorite = '/favorite'
 }
 
 export const emptyFilm = {

@@ -11,12 +11,6 @@ import {configureStore} from '@reduxjs/toolkit';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const promo = {
-  title: 'The Grand Budapest Hotel',
-  genre: 'Drama',
-  date: 2014,
-};
-
 const api = CreateAPI(
   () => store.dispatch(requireAuthorization(AuthorizationStatus.NoAuth)),
 );
@@ -40,9 +34,6 @@ ReactDOM.render(
     <Provider store= {store}>
       <ToastContainer/>
       <App
-        title = {promo.title}
-        genre = {promo.genre}
-        date = {promo.date}
         api = {api}
       />
     </Provider>

@@ -6,6 +6,8 @@ import {CommentType} from '../../types/comment-type';
 import {APIRoute} from '../../const';
 import {updateComments} from '../../store/action';
 import {useDispatch} from 'react-redux';
+import {useRef} from 'react';
+import {useEffect} from 'react';
 import {toast} from 'react-toastify';
 import {useParams, useHistory} from 'react-router-dom';
 
@@ -46,6 +48,9 @@ function ReviewForm({api}: ReviewFormProps): JSX.Element {
 
   const currentId = +id;
 
+  const commentTextRef = useRef<HTMLTextAreaElement | null>(null);
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
+
   const dispatch = useDispatch();
 
   const addComment = async (filmId: number): Promise<void> => {
@@ -58,6 +63,16 @@ function ReviewForm({api}: ReviewFormProps): JSX.Element {
       toast.info(ERROR_MESSAGE);
     }
   };
+
+  useEffect(() => {
+    if(commentTextRef.current !== null && submitButtonRef.current !== null) {
+      if (commentTextRef.current.value.length < ReviewLength.Min || commentTextRef.current?.value.length > ReviewLength.Max) {
+        submitButtonRef.current.disabled = true;
+      } else {
+        submitButtonRef.current.disabled = false;
+      }
+    }
+  }, [commentTextRef.current?.value.length]);
 
   return (
     <div className="add-review">
@@ -81,6 +96,7 @@ function ReviewForm({api}: ReviewFormProps): JSX.Element {
 
         <div className="add-review__text">
           <textarea
+            ref={commentTextRef}
             disabled = {isDisabled}
             className="add-review__textarea"
             name="review-text"
@@ -95,6 +111,7 @@ function ReviewForm({api}: ReviewFormProps): JSX.Element {
           </textarea>
           <div className="add-review__submit">
             <button
+              ref={submitButtonRef}
               disabled = {isDisabled}
               className="add-review__btn"
               type="submit"

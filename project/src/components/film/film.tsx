@@ -2,13 +2,13 @@ import {FilmType} from '../../types/film-type';
 import {CommentType} from '../../types/comment-type';
 import {FilmList} from '../film-list/film-list';
 import {Link, useParams, useHistory} from 'react-router-dom';
-import {AppRoute, APIRoute} from '../../const';
+import {AppRoute, APIRoute, AuthorizationStatus} from '../../const';
 import FilmDetails from './film-details';
 import Header from '../header/header';
 import Footer from '../footer/footer';
 import {useSelector, useDispatch} from 'react-redux';
 import {useEffect, useState} from 'react';
-import {getFilmData} from '../../store/selectors';
+import {getFilmData, getAuthorizationStatus} from '../../store/selectors';
 import {AxiosInstance} from 'axios';
 import {adaptToClient} from '../../utils/common';
 import {emptyFilm, emptyComment} from '../../const';
@@ -17,18 +17,19 @@ import {updateComments} from '../../store/action';
 
 type FilmProps = {
   api: AxiosInstance,
+  changeStatusFunction: (id: number, filmStatus: boolean, cb: (data: boolean) => void) => Promise<void>,
 }
 
 function Film(props: FilmProps): JSX.Element {
   const {id} = useParams<{id: string}>();
   const currentId = +id;
-  const filmData = useSelector(getFilmData);
-  // const filmList = useSelector(getFilmList);
 
-  // const filmListArrayId = filmList.map((film) => film.id);
+  const filmData = useSelector(getFilmData);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
 
   const [similarFilms, setSimilarFilms] = useState([emptyFilm]);
   const [comments, setComments] = useState([emptyComment]);
+  const [filmStatus, setFilmStatus] = useState(false);
 
   const history = useHistory();
 
@@ -49,7 +50,8 @@ function Film(props: FilmProps): JSX.Element {
     loadComments(currentId);
     dispatch(updateComments(comments));
     dispatch(fetchCurrentFilmAction(currentId));
-  }, [currentId]);
+    setFilmStatus(filmData.isFavorite);
+  }, [currentId, filmData.isFavorite]);
 
   const {
     backgroundImage,
@@ -79,7 +81,7 @@ function Film(props: FilmProps): JSX.Element {
 
               <div className="film-card__buttons">
                 <button className="btn btn--play film-card__button" type="button"
-                  onClick={() => history.push(AppRoute.Player)}
+                  onClick={() => history.push(`${AppRoute.Player}/${currentId}`)}
                 >
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use xlinkHref="#play-s"></use>
@@ -87,14 +89,26 @@ function Film(props: FilmProps): JSX.Element {
                   <span>Play</span>
                 </button>
                 <button className="btn btn--list film-card__button" type="button"
-                  onClick={() => history.push(AppRoute.MyList)}
+                  onClick={() => {
+                    props.changeStatusFunction(currentId, filmStatus, setFilmStatus);
+                  }}
                 >
-                  <svg viewBox="0 0 19 20" width="19" height="20">
-                    <use xlinkHref="#add"></use>
-                  </svg>
+                  {filmStatus ?
+                    <svg viewBox="0 0 18 14" width="18" height="14">
+                      <use xlinkHref="#in-list"></use>
+                    </svg> :
+                    <svg viewBox="0 0 19 20" width="19" height="20">
+                      <use xlinkHref="#add"></use>
+                    </svg>}
                   <span>My list</span>
                 </button>
-                <Link to={`/films/${currentId}/review`} className="btn film-card__button">Add review</Link>
+                {authorizationStatus === AuthorizationStatus.Auth &&
+                  <Link
+                    to={`/films/${currentId}/review`}
+                    className="btn film-card__button"
+                  >
+                    Add review
+                  </Link>}
               </div>
             </div>
           </div>
@@ -128,6 +142,5 @@ function Film(props: FilmProps): JSX.Element {
     </>
   );
 }
-
 
 export default Film;

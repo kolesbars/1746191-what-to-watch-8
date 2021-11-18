@@ -1,14 +1,36 @@
 import {FilmList} from '../film-list/film-list';
 import {FilmType} from '../../types/film-type';
+import {APIRoute} from '../../const';
+import {useState, useEffect} from 'react';
+import {useHistory} from 'react-router';
+import {emptyFilm} from '../../const';
+import {AxiosInstance} from 'axios';
+import {adaptToClient} from '../../utils/common';
 import Header from '../header/header';
 import Footer from '../footer/footer';
 
 type MyListProps = {
-  films: FilmType[]
+  api: AxiosInstance,
 }
 
-function MyList(props: MyListProps):JSX.Element {
+function MyList({api}: MyListProps):JSX.Element {
   const getTitle = () => <h1 className="page-title user-page__title">My list</h1>;
+
+  const history = useHistory();
+
+  const [favoriteFilms, setFavoriteFilms] = useState([emptyFilm]);
+
+  const loadFavoriteFilms = async () => {
+    const {data} = await api.get<FilmType[]>(APIRoute.Favorite);
+    setFavoriteFilms(data);
+  };
+
+  useEffect(() => {
+    loadFavoriteFilms();
+  }, [history.location.pathname]);
+
+  const adaptedFavoriteFilms = favoriteFilms.map((film) => adaptToClient(film));
+
   return (
     <div className="user-page">
       <Header
@@ -18,7 +40,7 @@ function MyList(props: MyListProps):JSX.Element {
         <h2 className="catalog__title visually-hidden">Catalog</h2>
 
         <div className="catalog__films-list">
-          <FilmList films = {props.films}/>
+          <FilmList films = {adaptedFavoriteFilms}/>
         </div>
       </section>
       <Footer/>
