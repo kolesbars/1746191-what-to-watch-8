@@ -1,6 +1,7 @@
 import {FilmType} from '../../types/film-type';
 import {Link} from 'react-router-dom';
 import {useState, useEffect} from 'react';
+import {useHistory} from 'react-router';
 import VideoPlayer from './videoplayer';
 
 type FilmsCardProps = {
@@ -11,7 +12,9 @@ type FilmsCardProps = {
 
 function FilmCard(props: FilmsCardProps): JSX.Element {
   const {film} = props;
-  const {id, name, previewImage, previewVideoLink} = film;
+  const {name, previewImage, previewVideoLink, id} = film;
+
+  const history = useHistory();
 
   const [isMouseEnter, setIsMouseEnter] = useState(false);
   const [isVideo, setIsVideo] = useState(false);
@@ -32,7 +35,7 @@ function FilmCard(props: FilmsCardProps): JSX.Element {
     <article
       className="small-film-card catalog__films-card"
       onMouseEnter = {() => {
-        props.setActiveFilm(film.id);
+        props.setActiveFilm(id);
         const TimeOutId = setTimeout(() => {
           setIsMouseEnter(true);
         }, 1000);
@@ -43,6 +46,11 @@ function FilmCard(props: FilmsCardProps): JSX.Element {
         props.setActiveFilm(0);
         clearTimeout(timeOutForMouseEnter);
         setIsMouseEnter(false);
+      }}
+
+      onClick = {(evt) => {
+        evt.preventDefault();
+        history.push(`/films/${film.id}`);
       }}
     >
       <div className="small-film-card__image">

@@ -5,31 +5,46 @@ import Film from '../film/film';
 import AddReview from '../add-review/add-review';
 import Player from '../player/player';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
-import {AppRoute} from '../../const';
+import {AppRoute, APIRoute} from '../../const';
 import {Switch, Route, Router as BrowserRouter} from 'react-router-dom';
 import PrivateRoute from '../private-route/private-route';
+import ComponentWithFilmChecking from '../component-with-film-checking/component-with-film-checking.tsx';
 import {useSelector} from 'react-redux';
 import {getFilmList} from '../../store/selectors';
 import browserHistory from '../../browser-history';
+import {FilmType} from '../../types/film-type';
+import {adaptToClient} from '../../utils/common';
+import {toast} from 'react-toastify';
+import {AxiosInstance} from 'axios';
+
+const CHANGE_STATUS_FAIL_MESSAGE = 'Необходимо авторизоваться';
 
 type AppProps = {
-  title: string,
-  genre: string,
-  date: number,
+  api: AxiosInstance,
 }
 
-function App({title, genre, date}: AppProps): JSX.Element {
+function App({api}: AppProps): JSX.Element {
   const filmList = useSelector(getFilmList);
+
+  const changeFilmStatus = async (id: number, filmStatus: boolean, cb: (data: boolean) => void) => {
+    let status;
+    filmStatus === true ? status = 0 : status = 1;
+    try {
+      const {data} = await api.post<FilmType>(`${APIRoute.Favorite}/${id}/${status}`);
+      cb(adaptToClient(data).isFavorite);
+    } catch {
+      toast.info(CHANGE_STATUS_FAIL_MESSAGE);
+    }
+  };
 
   return (
     <BrowserRouter history={browserHistory}>
       <Switch>
         <Route path = {AppRoute.Main} exact>
           <Main
-            title = {title}
-            promoGenre = {genre}
-            date = {date}
+            api = {api}
             films = {filmList}
+            changeStatusFunction = {changeFilmStatus}
           />
         </Route>
         <Route path = {AppRoute.SignIn} exact>
@@ -38,24 +53,36 @@ function App({title, genre, date}: AppProps): JSX.Element {
         <PrivateRoute
           path = {AppRoute.MyList}
           exact
-          render = {() => <MyList films = {filmList}/>}
+          render = {() =>
+            (
+              <MyList
+                api={api}
+              />)}
         >
         </PrivateRoute>
         <PrivateRoute
           path = {AppRoute.AddReview}
           exact
-          render = {() => <AddReview films = {filmList}/>}
+          render = {() =>
+            (
+              <AddReview
+                api = {api}
+              />)}
         >
         </PrivateRoute>
         <Route path = {AppRoute.Film} exact>
-          <Film
-            films = {filmList}
-          />
+          <ComponentWithFilmChecking>
+            <Film
+              api = {api}
+              changeStatusFunction = {changeFilmStatus}
+            />
+          </ComponentWithFilmChecking>
         </Route>
-        <Route path = {AppRoute.Player} exact>
-          <Player
-            films = {filmList}
-          />
+        <Route path = {`${AppRoute.Player}/:id`} exact>
+          <Player/>
+        </Route>
+        <Route path = {AppRoute.NotFoundScreen}>
+          <NotFoundScreen/>
         </Route>
         <Route>
           <NotFoundScreen/>

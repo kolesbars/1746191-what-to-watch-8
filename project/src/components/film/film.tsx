@@ -1,26 +1,66 @@
 import {FilmType} from '../../types/film-type';
+import {CommentType} from '../../types/comment-type';
 import {FilmList} from '../film-list/film-list';
-import {Link} from 'react-router-dom';
-import {useHistory} from 'react-router-dom';
-import {AppRoute} from '../../const';
+import {Link, useParams, useHistory} from 'react-router-dom';
+import {AppRoute, APIRoute, AuthorizationStatus} from '../../const';
 import FilmDetails from './film-details';
+import Header from '../header/header';
+import Footer from '../footer/footer';
+import {useSelector, useDispatch} from 'react-redux';
+import {useEffect, useState} from 'react';
+import {getFilmData, getAuthorizationStatus} from '../../store/selectors';
+import {AxiosInstance} from 'axios';
+import {adaptToClient} from '../../utils/common';
+import {emptyFilm, emptyComment} from '../../const';
+import {fetchCurrentFilmAction} from '../../store/api-actions';
+import {updateComments} from '../../store/action';
 
 type FilmProps = {
-  films: FilmType[]
+  api: AxiosInstance,
+  changeStatusFunction: (id: number, filmStatus: boolean, cb: (data: boolean) => void) => Promise<void>,
 }
 
 function Film(props: FilmProps): JSX.Element {
-  const {films} = props;
+  const {id} = useParams<{id: string}>();
+  const currentId = +id;
+
+  const filmData = useSelector(getFilmData);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+
+  const [similarFilms, setSimilarFilms] = useState([emptyFilm]);
+  const [comments, setComments] = useState([emptyComment]);
+  const [filmStatus, setFilmStatus] = useState(false);
+
+  const history = useHistory();
+
+  const loadSimilarFilms = async (filmId: number): Promise<void> => {
+    const {data} = await props.api.get<FilmType[]>(`${APIRoute.Films}/${filmId}/similar`);
+    setSimilarFilms(data.map((film) => adaptToClient(film)));
+  };
+
+  const loadComments = async (filmId: number): Promise<void> => {
+    const {data} = await props.api.get<CommentType[]>(`${APIRoute.Comments}/${filmId}`);
+    setComments(data);
+  };
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    loadSimilarFilms(currentId);
+    loadComments(currentId);
+    dispatch(updateComments(comments));
+    dispatch(fetchCurrentFilmAction(currentId));
+    setFilmStatus(filmData.isFavorite);
+  }, [currentId, filmData.isFavorite]);
+
   const {
     backgroundImage,
     name,
     genre,
     released,
     posterImage,
-    id,
-  } = films[0];
+  } = filmData;
 
-  const history = useHistory();
   return (
     <>
       <section className="film-card film-card--full">
@@ -30,28 +70,7 @@ function Film(props: FilmProps): JSX.Element {
           </div>
 
           <h1 className="visually-hidden">WTW</h1>
-
-          <header className="page-header film-card__head">
-            <div className="logo">
-              <Link to="/" className="logo__link">
-                <span className="logo__letter logo__letter--1">W</span>
-                <span className="logo__letter logo__letter--2">T</span>
-                <span className="logo__letter logo__letter--3">W</span>
-              </Link>
-            </div>
-
-            <ul className="user-block">
-              <li className="user-block__item">
-                <div className="user-block__avatar">
-                  <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-                </div>
-              </li>
-              <li className="user-block__item">
-                <a className="user-block__link" href="{url}">Sign out</a>
-              </li>
-            </ul>
-          </header>
-
+          <Header/>
           <div className="film-card__wrap">
             <div className="film-card__desc">
               <h2 className="film-card__title">{name}</h2>
@@ -62,7 +81,7 @@ function Film(props: FilmProps): JSX.Element {
 
               <div className="film-card__buttons">
                 <button className="btn btn--play film-card__button" type="button"
-                  onClick={() => history.push(AppRoute.Player)}
+                  onClick={() => history.push(`${AppRoute.Player}/${currentId}`)}
                 >
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use xlinkHref="#play-s"></use>
@@ -70,14 +89,26 @@ function Film(props: FilmProps): JSX.Element {
                   <span>Play</span>
                 </button>
                 <button className="btn btn--list film-card__button" type="button"
-                  onClick={() => history.push(AppRoute.MyList)}
+                  onClick={() => {
+                    props.changeStatusFunction(currentId, filmStatus, setFilmStatus);
+                  }}
                 >
-                  <svg viewBox="0 0 19 20" width="19" height="20">
-                    <use xlinkHref="#add"></use>
-                  </svg>
+                  {filmStatus ?
+                    <svg viewBox="0 0 18 14" width="18" height="14">
+                      <use xlinkHref="#in-list"></use>
+                    </svg> :
+                    <svg viewBox="0 0 19 20" width="19" height="20">
+                      <use xlinkHref="#add"></use>
+                    </svg>}
                   <span>My list</span>
                 </button>
-                <Link to="/films/id/review" className="btn film-card__button">Add review</Link>
+                {authorizationStatus === AuthorizationStatus.Auth &&
+                  <Link
+                    to={`/films/${currentId}/review`}
+                    className="btn film-card__button"
+                  >
+                    Add review
+                  </Link>}
               </div>
             </div>
           </div>
@@ -89,7 +120,8 @@ function Film(props: FilmProps): JSX.Element {
               <img src={posterImage} alt={name} width="218" height="327" />
             </div>
             <FilmDetails
-              data = {films[0]}
+              data = {filmData}
+              comments = {comments}
             />
           </div>
         </div>
@@ -101,24 +133,11 @@ function Film(props: FilmProps): JSX.Element {
 
           <div className="catalog__films-list">
             <FilmList
-              films = {films.filter((film) => film.genre === genre && film.id !== id).slice(0, 4)}
+              films = {similarFilms.filter((film) => film.id !== currentId)}
             />
           </div>
         </section>
-
-        <footer className="page-footer">
-          <div className="logo">
-            <Link to="/" className="logo__link logo__link--light">
-              <span className="logo__letter logo__letter--1">W</span>
-              <span className="logo__letter logo__letter--2">T</span>
-              <span className="logo__letter logo__letter--3">W</span>
-            </Link>
-          </div>
-
-          <div className="copyright">
-            <p>© 2019 What to watch Ltd.</p>
-          </div>
-        </footer>
+        <Footer/>
       </div>
     </>
   );

@@ -4,9 +4,12 @@ import {State} from './state';
 import {Action} from 'redux';
 
 export enum ActionType {
+  UpdateFilmId= 'updateFilmId',
+  UpdateComments = 'updateComments',
   ChangeGenre = 'changeGenre',
   FilterFilmsByGenre = 'filterFilmsByGenre',
   LoadFilms = 'loadFilms',
+  LoadCurrentFilm = 'loadCurrentFilm',
   RequireAuthorization = 'requireAuthorization',
   RequireLogout = 'requireLogout',
 }

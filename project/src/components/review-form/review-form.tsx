@@ -1,40 +1,123 @@
 import {useState, BaseSyntheticEvent} from 'react';
 import RatingStar from './rating-star';
 import {memo} from 'react';
+import {AxiosInstance} from 'axios';
+import {CommentType} from '../../types/comment-type';
+import {APIRoute} from '../../const';
+import {updateComments} from '../../store/action';
+import {useDispatch} from 'react-redux';
+import {useRef} from 'react';
+import {useEffect} from 'react';
+import {toast} from 'react-toastify';
+import {useParams, useHistory} from 'react-router-dom';
 
-function getRatingStars(): JSX.Element[] {
+type ReviewFormProps = {
+  api: AxiosInstance
+}
+
+enum ReviewLength {
+  Max = 400,
+  Min = 50,
+}
+
+const ERROR_MESSAGE = 'Комментарий не отправлен';
+
+function getRatingStars(isDisabled: boolean): JSX.Element[] {
   const stars = [];
+
   for (let i = 10; i>0; i--) {
-    stars.push(<RatingStar number = {i} key={`${i}-star`}/>);
+    stars.push(
+      <RatingStar
+        isDisabled = {isDisabled}
+        number = {i}
+        key={`${i}-star`}
+      />);
   }
   return stars;
 }
 
-function ReviewForm(): JSX.Element {
+function ReviewForm({api}: ReviewFormProps): JSX.Element {
 
-  const [, setRating] = useState(0);
-  const [, setReviewText] = useState('');
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  const history = useHistory();
+
+  const {id} = useParams<{id: string}>();
+
+  const currentId = +id;
+
+  const commentTextRef = useRef<HTMLTextAreaElement | null>(null);
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  const dispatch = useDispatch();
+
+  const addComment = async (filmId: number): Promise<void> => {
+    try {
+      const {data} = await api.post<CommentType[]>(`${APIRoute.Comments}/${filmId}`, {rating, comment});
+      dispatch(updateComments(data));
+      history.goBack();
+    } catch (error) {
+      setIsDisabled(false);
+      toast.info(ERROR_MESSAGE);
+    }
+  };
+
+  useEffect(() => {
+    if(commentTextRef.current !== null && submitButtonRef.current !== null) {
+      if (commentTextRef.current.value.length < ReviewLength.Min || commentTextRef.current?.value.length > ReviewLength.Max) {
+        submitButtonRef.current.disabled = true;
+      } else {
+        submitButtonRef.current.disabled = false;
+      }
+    }
+  }, [commentTextRef.current?.value.length]);
 
   return (
     <div className="add-review">
-      <form action="#" className="add-review__form" >
+      <form
+        className="add-review__form"
+        onSubmit={(evt) => {
+          evt.preventDefault();
+          setIsDisabled(true);
+          addComment(currentId);
+        }}
+      >
         <div className="rating">
-          <div className="rating__stars"
+          <div
+            className="rating__stars"
             onClick={({target}: BaseSyntheticEvent) => {
               setRating(Number(target.value));}}
           >
-            {getRatingStars()}
+            {getRatingStars(isDisabled)}
           </div>
         </div>
 
         <div className="add-review__text">
-          <textarea className="add-review__textarea" name="review-text" id="review-text" placeholder="Review text"
+          <textarea
+            ref={commentTextRef}
+            disabled = {isDisabled}
+            className="add-review__textarea"
+            name="review-text"
+            id="review-text"
+            placeholder="Review text"
+            minLength={ReviewLength.Min}
+            maxLength={ReviewLength.Max}
             onInput={({target}: BaseSyntheticEvent) => {
-              setReviewText(target.value);}}
+              setComment(target.value);
+            }}
           >
           </textarea>
           <div className="add-review__submit">
-            <button className="add-review__btn" type="submit">Post</button>
+            <button
+              ref={submitButtonRef}
+              disabled = {isDisabled}
+              className="add-review__btn"
+              type="submit"
+            >
+              Post
+            </button>
           </div>
         </div>
       </form>

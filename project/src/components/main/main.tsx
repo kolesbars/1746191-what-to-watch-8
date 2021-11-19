@@ -1,42 +1,48 @@
 import {FilmList} from '../film-list/film-list';
 import {useHistory} from 'react-router-dom';
 import {useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
-import {AppRoute, AuthorizationStatus} from '../../const';
+import {AppRoute, APIRoute} from '../../const';
 import GenresList from './genres-list';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import Loading from '../loading/loading';
+import Header from '../header/header';
 import Footer from '../footer/footer';
 import ShowMoreButton from './show-more-button';
 import {FilmType} from '../../types/film-type';
-import {logoutAction} from '../../store/api-actions';
-import {getGenre, getUnfilteredFilms, getLoadedDataStatus, getAuthorizationStatus} from '../../store/selectors';
+import {getGenre, getUnfilteredFilms, getLoadedDataStatus} from '../../store/selectors';
+import {emptyFilm} from '../../const';
+import {adaptToClient} from '../../utils/common';
+import {AxiosInstance} from 'axios';
 
 const FILMS_COUNT = 8;
 
 type MainScreenProps = {
-  title: string,
-  promoGenre: string,
-  date: number,
+  api: AxiosInstance,
   films: FilmType[],
+  changeStatusFunction: (id: number, filmStatus: boolean, cb: (data: boolean) => void) => Promise<void>
 }
 
 function Main(props: MainScreenProps): JSX.Element {
-  const {title, promoGenre, date, films} = props;
+  const {api, films, changeStatusFunction} = props;
 
   const genre = useSelector(getGenre);
   const unfilteredFilms = useSelector(getUnfilteredFilms);
   const isDataLoaded = useSelector(getLoadedDataStatus);
-  const authorizationStatus = useSelector(getAuthorizationStatus);
   const history = useHistory();
 
-  const  dispatch = useDispatch();
+  const [filmsCount, setFilmsCount] = useState(FILMS_COUNT);
+  const [promoFilmData, setPromoFilmData] = useState(emptyFilm);
+  const [filmStatus, setFilmStatus] = useState(false);
 
-  const logout = () => {
-    dispatch(logoutAction());
+  const loadPromoFilmData = async () => {
+    const {data} = await api.get<FilmType>(APIRoute.Promo);
+    setPromoFilmData(adaptToClient(data));
   };
 
-  const [filmsCount, setFilmsCount] = useState(FILMS_COUNT);
+  useEffect(() => {
+    loadPromoFilmData();
+    setFilmStatus(promoFilmData.isFavorite);
+  }, [promoFilmData.isFavorite, history.location.pathname]);
 
   useEffect(() => {
     setFilmsCount(FILMS_COUNT);
@@ -46,73 +52,52 @@ function Main(props: MainScreenProps): JSX.Element {
     <>
       <section className="film-card">
         <div className="film-card__bg">
-          <img src="img/bg-the-grand-budapest-hotel.jpg" alt="The Grand Budapest Hotel" />
+          <img src={promoFilmData.backgroundImage} alt={promoFilmData.name} />
         </div>
 
         <h1 className="visually-hidden">WTW</h1>
-
-        <header className="page-header film-card__head">
-          <div className="logo">
-            <Link className="logo__link" to="/">
-              <span className="logo__letter logo__letter--1">W</span>
-              <span className="logo__letter logo__letter--2">T</span>
-              <span className="logo__letter logo__letter--3">W</span>
-            </Link>
-          </div>
-
-          <ul className="user-block">
-            <li className="user-block__item">
-              <div className="user-block__avatar">
-                <Link to="/myList">
-                  <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-                </Link>
-              </div>
-            </li>
-            <li className="user-block__item">
-              {authorizationStatus === AuthorizationStatus.Auth ?
-                <Link
-                  className="user-block__link"
-                  to="/"
-                  onClick={(evt) => {
-                    evt.preventDefault();
-                    logout();
-                  }}
-                >
-                  Sign out
-                </Link> :
-                <Link className="user-block__link" to="/login">Sign in</Link>}
-            </li>
-          </ul>
-        </header>
-
+        <Header/>
         <div className="film-card__wrap">
           <div className="film-card__info">
             <div className="film-card__poster">
-              <img src="img/the-grand-budapest-hotel-poster.jpg" alt="The Grand Budapest Hotel poster" width="218" height="327" />
+              <img
+                src={promoFilmData.posterImage}
+                alt={`${promoFilmData.name} poster`}
+                width="218"
+                height="327"
+              />
             </div>
 
             <div className="film-card__desc">
-              <h2 className="film-card__title">{title}</h2>
+              <h2 className="film-card__title">{promoFilmData.name}</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{promoGenre}</span>
-                <span className="film-card__year">{date}</span>
+                <span className="film-card__genre">{promoFilmData.genre}</span>
+                <span className="film-card__year">{promoFilmData.released}</span>
               </p>
 
               <div className="film-card__buttons">
                 <button className="btn btn--play film-card__button" type="button"
-                  onClick={() => history.push(AppRoute.Player)}
+                  onClick={() => history.push(`${AppRoute.Player}/${promoFilmData.id}`)}
                 >
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use xlinkHref="#play-s"></use>
                   </svg>
                   <span>Play</span>
                 </button>
-                <button className="btn btn--list film-card__button" type="button"
-                  onClick={() => history.push(AppRoute.MyList)}
+                <button
+                  className="btn btn--list film-card__button"
+                  type="button"
+                  onClick={() => {
+                    changeStatusFunction(promoFilmData.id, filmStatus, setFilmStatus);
+                  }}
                 >
-                  <svg viewBox="0 0 19 20" width="19" height="20">
-                    <use xlinkHref="#add"></use>
-                  </svg>
+                  {filmStatus ?
+                    <svg viewBox="0 0 18 14" width="18" height="14">
+                      <use xlinkHref="#in-list"></use>
+                    </svg> :
+                    <svg viewBox="0 0 19 20" width="19" height="20">
+                      <use xlinkHref="#add"></use>
+                    </svg>}
                   <span>My list</span>
                 </button>
               </div>
