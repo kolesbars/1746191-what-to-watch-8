@@ -6,6 +6,7 @@ import {AppRoute, APIRoute, AuthorizationStatus} from '../../const';
 import FilmDetails from './film-details';
 import Header from '../header/header';
 import Footer from '../footer/footer';
+import Loading from '../loading/loading';
 import {useSelector, useDispatch} from 'react-redux';
 import {useEffect, useState} from 'react';
 import {getFilmData, getAuthorizationStatus} from '../../store/selectors';
@@ -27,6 +28,7 @@ function Film(props: FilmProps): JSX.Element {
   const filmData = useSelector(getFilmData);
   const authorizationStatus = useSelector(getAuthorizationStatus);
 
+  const [isLoading, setIsLoading] = useState(false);
   const [similarFilms, setSimilarFilms] = useState([emptyFilm]);
   const [comments, setComments] = useState([emptyComment]);
   const [filmStatus, setFilmStatus] = useState(false);
@@ -45,11 +47,23 @@ function Film(props: FilmProps): JSX.Element {
 
   const dispatch = useDispatch();
 
+  const loadFilmData = async () => {
+    setIsLoading(true);
+
+    try {
+      await dispatch(fetchCurrentFilmAction(currentId));
+      await loadComments(currentId);
+      await loadSimilarFilms(currentId);
+      dispatch(updateComments(comments));
+      setIsLoading(false);
+    } catch {
+      setIsLoading(false);
+      history.push(AppRoute.NotFoundScreen);
+    }
+  };
+
   useEffect(() => {
-    loadSimilarFilms(currentId);
-    loadComments(currentId);
-    dispatch(updateComments(comments));
-    dispatch(fetchCurrentFilmAction(currentId));
+    loadFilmData();
     setFilmStatus(filmData.isFavorite);
   }, [currentId, filmData.isFavorite]);
 
@@ -113,18 +127,18 @@ function Film(props: FilmProps): JSX.Element {
             </div>
           </div>
         </div>
-
-        <div className="film-card__wrap film-card__translate-top">
-          <div className="film-card__info">
-            <div className="film-card__poster film-card__poster--big">
-              <img src={posterImage} alt={name} width="218" height="327" />
+        {isLoading ? <Loading/> :
+          <div className="film-card__wrap film-card__translate-top">
+            <div className="film-card__info">
+              <div className="film-card__poster film-card__poster--big">
+                <img src={posterImage} alt={name} width="218" height="327" />
+              </div>
+              <FilmDetails
+                data = {filmData}
+                comments = {comments}
+              />
             </div>
-            <FilmDetails
-              data = {filmData}
-              comments = {comments}
-            />
-          </div>
-        </div>
+          </div>}
       </section>
 
       <div className="page-content">

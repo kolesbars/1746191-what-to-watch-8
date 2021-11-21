@@ -7,6 +7,7 @@ import {getFilmData} from '../../store/selectors';
 import {toast} from 'react-toastify';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import Spinner from './spinner';
 import {fetchCurrentFilmAction} from '../../store/api-actions';
 
 const VIDEO_FAIL_MESSAGE ='Не удалось загрузить видео';
@@ -15,7 +16,7 @@ dayjs.extend(duration);
 
 function Player(): JSX.Element {
   const {id} = useParams<{id: string}>();
-  const currrentId = +id;
+  const currentId = +id;
 
   const filmData = useSelector(getFilmData);
 
@@ -23,10 +24,11 @@ function Player(): JSX.Element {
 
   const dispatch = useDispatch();
 
-  const {videoLink, backgroundImage} = filmData;
+  const {videoLink} = filmData;
 
   const history = useHistory();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isPlaing, setIsPlaing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [videoDuration, setVideoDuration] = useState(dayjs.duration(0, 's').format('mm:ss'));
@@ -52,9 +54,15 @@ function Player(): JSX.Element {
     return dayjs.duration(0, 's').format('mm:ss');
   };
 
+  const onloadeddata = async() => {
+    setIsLoading(true);
+    await dispatch(fetchCurrentFilmAction(currentId));
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    dispatch(fetchCurrentFilmAction(currrentId));
-  }, [currrentId]);
+    onloadeddata();
+  }, [currentId]);
 
   useEffect(() => {
     if (videoRef.current !== null && isPlaing) {
@@ -62,7 +70,9 @@ function Player(): JSX.Element {
       setIsPlaing(true);
       if (playPromise !== undefined) {
         playPromise
-          .catch(() => toast.info(VIDEO_FAIL_MESSAGE));
+          .catch((error) => {
+            toast.info(VIDEO_FAIL_MESSAGE);
+          });
       }
     }
   }, [isPlaing]);
@@ -71,7 +81,7 @@ function Player(): JSX.Element {
     if (videoRef.current !== null) {
       isPlaing ? videoRef.current.pause() : videoRef.current.play();
     }
-  }, [isPlaing]);
+  }, [isPlaing, isLoading]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -83,13 +93,13 @@ function Player(): JSX.Element {
 
   return (
     <div className="player">
-      <video
-        src={videoLink}
-        className="player__video"
-        poster={backgroundImage}
-        ref={videoRef}
-      >
-      </video>
+      {isLoading ? <Spinner/> :
+        <video
+          src={videoLink}
+          className="player__video"
+          ref={videoRef}
+        >
+        </video>}
 
       <button type="button" className="player__exit" onClick={() => history.push(AppRoute.Main)}>Exit</button>
 

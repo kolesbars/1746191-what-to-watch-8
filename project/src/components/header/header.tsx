@@ -45,8 +45,7 @@ function Header ({element}: HeaderProps): JSX.Element {
                 evt.preventDefault();
                 logout();
               }}
-            >
-                  Sign out
+            >Sign out
             </Link> :
             <Link className="user-block__link" to="/login">Sign in</Link>}
         </li>

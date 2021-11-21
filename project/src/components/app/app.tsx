@@ -8,7 +8,7 @@ import NotFoundScreen from '../not-found-screen/not-found-screen';
 import {AppRoute, APIRoute} from '../../const';
 import {Switch, Route, Router as BrowserRouter} from 'react-router-dom';
 import PrivateRoute from '../private-route/private-route';
-import ComponentWithFilmChecking from '../component-with-film-checking/component-with-film-checking.tsx';
+import RouteForGuests from '../private-route/route-for-guests';
 import {useSelector} from 'react-redux';
 import {getFilmList} from '../../store/selectors';
 import browserHistory from '../../browser-history';
@@ -47,9 +47,12 @@ function App({api}: AppProps): JSX.Element {
             changeStatusFunction = {changeFilmStatus}
           />
         </Route>
-        <Route path = {AppRoute.SignIn} exact>
-          <SignIn/>
-        </Route>
+        <RouteForGuests
+          path = {AppRoute.SignIn}
+          exact
+          render = {() =>(<SignIn/>)}
+        >
+        </RouteForGuests>
         <PrivateRoute
           path = {AppRoute.MyList}
           exact
@@ -71,12 +74,10 @@ function App({api}: AppProps): JSX.Element {
         >
         </PrivateRoute>
         <Route path = {AppRoute.Film} exact>
-          <ComponentWithFilmChecking>
-            <Film
-              api = {api}
-              changeStatusFunction = {changeFilmStatus}
-            />
-          </ComponentWithFilmChecking>
+          <Film
+            api = {api}
+            changeStatusFunction = {changeFilmStatus}
+          />
         </Route>
         <Route path = {`${AppRoute.Player}/:id`} exact>
           <Player/>
@@ -91,5 +92,4 @@ function App({api}: AppProps): JSX.Element {
     </BrowserRouter>
   );
 }
-
 export default App;

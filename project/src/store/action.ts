@@ -4,7 +4,6 @@ import {AuthorizationStatus} from '../const';
 import {createAction} from '@reduxjs/toolkit';
 import {CommentType} from '../types/comment-type';
 
-
 export const changeGenre = createAction(
   ActionType.ChangeGenre,
   (genre: string) => ({

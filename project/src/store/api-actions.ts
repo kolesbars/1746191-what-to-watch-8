@@ -7,6 +7,7 @@ import {Token, saveToken, dropToken} from '../services/token';
 import {toast} from 'react-toastify';
 
 const AUTH_FAIL_MESSAGE = 'Не забудьте авторизоваться';
+const LOAD_FILM_FAIL_MESSAGE = 'Фильма с таким id не существует';
 
 export const fetchFilmsAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
@@ -15,9 +16,13 @@ export const fetchFilmsAction = (): ThunkActionResult =>
   };
 
 export const fetchCurrentFilmAction = (id: number): ThunkActionResult =>
-  async (dispatch, _getState, api): Promise<void> => {
-    const {data} = await api.get<FilmType>(`${APIRoute.Films}/${id}`);
-    dispatch(loadCurrentFilm(data));
+  async (dispatch, _getState, api) => {
+    try {
+      const {data} = await api.get<FilmType>(`${APIRoute.Films}/${id}`);
+      dispatch(loadCurrentFilm(data));
+    } catch {
+      toast.info(LOAD_FILM_FAIL_MESSAGE);
+    }
   };
 
 export const checkAuthAction = (): ThunkActionResult =>

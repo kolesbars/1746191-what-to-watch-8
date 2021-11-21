@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {useRef, FormEvent} from 'react';
 import {useHistory} from 'react-router';
 import {useDispatch} from 'react-redux';
@@ -6,7 +6,6 @@ import {loginAction} from '../../store/api-actions';
 import {AuthData} from '../../types/auth-data';
 import {AppRoute} from '../../const';
 import Footer from '../footer/footer';
-
 
 function SignIn(): JSX.Element {
   const  dispatch = useDispatch();
@@ -64,7 +63,7 @@ function SignIn(): JSX.Element {
                 id="user-email"
                 required
               />
-              <label className="sign-in__label visually-hidden" htmlFor="user-email">Email address</label>
+              <label className="sign-in__label visually-hidden" htmlFor="user-email" >Email address</label>
             </div>
             <div className="sign-in__field">
               <input
@@ -74,6 +73,7 @@ function SignIn(): JSX.Element {
                 placeholder="Password"
                 name="user-password"
                 id="user-password"
+                pattern="(?=.*\d)(?=.*[a-zA-Z]).{2,}"
                 required
               />
               <label className="sign-in__label visually-hidden" htmlFor="user-password">Password</label>

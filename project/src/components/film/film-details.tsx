@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {FilmType} from '../../types/film-type';
 import {CommentType} from '../../types/comment-type';
 import {useState} from 'react';
@@ -31,7 +30,15 @@ const getRunTime = (time: number): string => {
 
 function FilmDetails(props: FilmDetailsProps): JSX.Element {
   const {data, comments} = props;
-  const {rating, scoresCount, description, director, starring, runTime, genre, released} = data;
+  const {
+    rating,
+    scoresCount,
+    description,
+    director,
+    starring,
+    runTime,
+    genre,
+    released} = data;
 
   const [currentTab, setTab] = useState('Overview');
 
