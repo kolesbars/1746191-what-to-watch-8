@@ -12,7 +12,7 @@ function FilmList(props: FilmListProps): JSX.Element {
 
   return (
     <>
-      {props.films.map((film, id) => {
+      {props.films.map((film) => {
         const keyValue = `${film.id}`;
         return (
           <FilmCard

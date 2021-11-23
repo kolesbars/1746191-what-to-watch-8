@@ -70,7 +70,7 @@ function Player(): JSX.Element {
       setIsPlaing(true);
       if (playPromise !== undefined) {
         playPromise
-          .catch((error) => {
+          .catch(() => {
             toast.info(VIDEO_FAIL_MESSAGE);
           });
       }
