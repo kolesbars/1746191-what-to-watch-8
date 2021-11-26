@@ -5,13 +5,21 @@ import {useDispatch} from 'react-redux';
 import {loginAction} from '../../store/api-actions';
 import {AuthData} from '../../types/auth-data';
 import {AppRoute} from '../../const';
+import {toast} from 'react-toastify';
 import Footer from '../footer/footer';
+
+const AUTH_FAIL_MESSAGE = 'Ошибка авторизации';
 
 function SignIn(): JSX.Element {
   const  dispatch = useDispatch();
 
-  const onSubmit = (authData: AuthData) => {
-    dispatch(loginAction(authData));
+  const onSubmit = async (authData: AuthData) => {
+    try {
+      await dispatch(loginAction(authData));
+      history.push(AppRoute.Main);
+    } catch {
+      toast.info(AUTH_FAIL_MESSAGE);
+    }
   };
 
   const loginRef = useRef<HTMLInputElement | null>(null);
@@ -28,7 +36,6 @@ function SignIn(): JSX.Element {
         login: loginRef.current.value,
         password: passwordRef.current.value,
       });
-      history.push(AppRoute.Main);
     }
   };
 
@@ -61,6 +68,7 @@ function SignIn(): JSX.Element {
                 placeholder="Email address"
                 name="user-email"
                 id="user-email"
+                pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
                 required
               />
               <label className="sign-in__label visually-hidden" htmlFor="user-email" >Email address</label>

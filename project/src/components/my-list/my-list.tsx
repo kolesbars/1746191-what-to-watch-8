@@ -1,11 +1,12 @@
 import {FilmList} from '../film-list/film-list';
 import {FilmType} from '../../types/film-type';
-import {APIRoute} from '../../const';
+import {APIRoute, ErrorMessage} from '../../const';
 import {useState, useEffect} from 'react';
 import {useHistory} from 'react-router';
 import {emptyFilm} from '../../const';
 import {AxiosInstance} from 'axios';
 import {adaptToClient} from '../../utils/common';
+import {toast} from 'react-toastify';
 import Header from '../header/header';
 import Footer from '../footer/footer';
 
@@ -21,8 +22,12 @@ function MyList({api}: MyListProps):JSX.Element {
   const [favoriteFilms, setFavoriteFilms] = useState([emptyFilm]);
 
   const loadFavoriteFilms = async () => {
-    const {data} = await api.get<FilmType[]>(APIRoute.Favorite);
-    setFavoriteFilms(data);
+    try {
+      const {data} = await api.get<FilmType[]>(APIRoute.Favorite);
+      setFavoriteFilms(data);
+    } catch {
+      toast.info(ErrorMessage.LoadDataFail);
+    }
   };
 
   useEffect(() => {

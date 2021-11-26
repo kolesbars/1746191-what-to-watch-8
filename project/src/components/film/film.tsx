@@ -2,14 +2,16 @@ import {FilmType} from '../../types/film-type';
 import {CommentType} from '../../types/comment-type';
 import {FilmList} from '../film-list/film-list';
 import {Link, useParams, useHistory} from 'react-router-dom';
-import {AppRoute, APIRoute, AuthorizationStatus} from '../../const';
+import {AppRoute, APIRoute, AuthorizationStatus, ErrorMessage} from '../../const';
 import FilmDetails from './film-details';
 import Header from '../header/header';
 import Footer from '../footer/footer';
 import Loading from '../loading/loading';
+import {toast} from 'react-toastify';
 import {useSelector, useDispatch} from 'react-redux';
 import {useEffect, useState} from 'react';
-import {getFilmData, getAuthorizationStatus} from '../../store/selectors';
+import {getFilmData} from '../../store/film-data/selectors';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
 import {AxiosInstance} from 'axios';
 import {adaptToClient} from '../../utils/common';
 import {emptyFilm, emptyComment} from '../../const';
@@ -36,13 +38,21 @@ function Film(props: FilmProps): JSX.Element {
   const history = useHistory();
 
   const loadSimilarFilms = async (filmId: number): Promise<void> => {
-    const {data} = await props.api.get<FilmType[]>(`${APIRoute.Films}/${filmId}/similar`);
-    setSimilarFilms(data.map((film) => adaptToClient(film)));
+    try {
+      const {data} = await props.api.get<FilmType[]>(`${APIRoute.Films}/${filmId}/similar`);
+      setSimilarFilms(data.map((film) => adaptToClient(film)));
+    } catch {
+      toast.info(ErrorMessage.LoadDataFail);
+    }
   };
 
   const loadComments = async (filmId: number): Promise<void> => {
-    const {data} = await props.api.get<CommentType[]>(`${APIRoute.Comments}/${filmId}`);
-    setComments(data);
+    try {
+      const {data} = await props.api.get<CommentType[]>(`${APIRoute.Comments}/${filmId}`);
+      setComments(data);
+    } catch {
+      toast.info(ErrorMessage.LoadDataFail);
+    }
   };
 
   const dispatch = useDispatch();
@@ -147,7 +157,7 @@ function Film(props: FilmProps): JSX.Element {
 
           <div className="catalog__films-list">
             <FilmList
-              films = {similarFilms.filter((film) => film.id !== currentId)}
+              films = {similarFilms.filter((film) => film.id !== currentId).slice(0, 4)}
             />
           </div>
         </section>

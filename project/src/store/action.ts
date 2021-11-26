@@ -16,12 +16,6 @@ export const updateComments = createAction(
     payload: comments,
   }));
 
-export const filterFilmListByGenre = createAction(
-  ActionType.FilterFilmsByGenre,
-  (films: FilmType[]) => ({
-    payload: films,
-  }));
-
 export const loadFilms = createAction(
   ActionType.LoadFilms,
   (filmList: FilmType[]) => ({

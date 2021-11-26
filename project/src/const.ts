@@ -23,6 +23,17 @@ export enum APIRoute {
   Favorite = '/favorite'
 }
 
+export enum ErrorMessage {
+  AuthFail = 'Не забудьте авторизоваться',
+  LoadFilmFail = 'Фильма с таким id не существует',
+  LoadFilmsFail = 'Не удалось загрузить данные',
+  LoginFail = 'Ошибка авторизации',
+  LogoutFail= 'Не удалось отправить запрос',
+  ChangeStatusFail= 'Необходимо авторизоваться',
+  SendCommentFail = 'Комментарий не отправлен',
+  LoadDataFail = 'Ошибка загрузки данных',
+}
+
 export const emptyFilm = {
   'id': 1,
   'name': '',

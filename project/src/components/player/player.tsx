@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom';
 import {useParams} from 'react-router';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppRoute} from '../../const';
-import {getFilmData} from '../../store/selectors';
+import {getFilmData} from '../../store/film-data/selectors';
 import {toast} from 'react-toastify';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -24,7 +24,7 @@ function Player(): JSX.Element {
 
   const dispatch = useDispatch();
 
-  const {videoLink} = filmData;
+  const {videoLink, name} = filmData;
 
   const history = useHistory();
 
@@ -135,7 +135,7 @@ function Player(): JSX.Element {
                 <span>Play</span>
               </>}
           </button>
-          <div className="player__name">Transpotting</div>
+          <div className="player__name">{name}</div>
 
           <button
             type="button"

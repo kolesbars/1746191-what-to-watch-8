@@ -3,7 +3,7 @@ import RatingStar from './rating-star';
 import {memo} from 'react';
 import {AxiosInstance} from 'axios';
 import {CommentType} from '../../types/comment-type';
-import {APIRoute} from '../../const';
+import {APIRoute, ErrorMessage} from '../../const';
 import {updateComments} from '../../store/action';
 import {useDispatch} from 'react-redux';
 import {useRef} from 'react';
@@ -19,8 +19,6 @@ enum ReviewLength {
   Max = 400,
   Min = 50,
 }
-
-const ERROR_MESSAGE = 'Комментарий не отправлен';
 
 function getRatingStars(isDisabled: boolean): JSX.Element[] {
   const stars = [];
@@ -58,21 +56,24 @@ function ReviewForm({api}: ReviewFormProps): JSX.Element {
       const {data} = await api.post<CommentType[]>(`${APIRoute.Comments}/${filmId}`, {rating, comment});
       dispatch(updateComments(data));
       history.goBack();
-    } catch (error) {
+    } catch {
       setIsDisabled(false);
-      toast.info(ERROR_MESSAGE);
+      toast.info(ErrorMessage.SendCommentFail);
     }
   };
 
   useEffect(() => {
     if(commentTextRef.current !== null && submitButtonRef.current !== null) {
-      if (commentTextRef.current.value.length < ReviewLength.Min || commentTextRef.current?.value.length > ReviewLength.Max) {
+      if (
+        commentTextRef.current.value.length < ReviewLength.Min ||
+        commentTextRef.current?.value.length > ReviewLength.Max ||
+        rating === 0) {
         submitButtonRef.current.disabled = true;
       } else {
         submitButtonRef.current.disabled = false;
       }
     }
-  }, [commentTextRef.current?.value.length]);
+  }, [commentTextRef.current?.value.length, rating]);
 
   return (
     <div className="add-review">

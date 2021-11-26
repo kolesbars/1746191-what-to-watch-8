@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom';
 import {AuthorizationStatus} from '../../const';
 import {useSelector, useDispatch} from 'react-redux';
-import {getAuthorizationStatus} from '../../store/selectors';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
 import {logoutAction} from '../../store/api-actions';
 
 type HeaderProps = {
@@ -29,13 +29,14 @@ function Header ({element}: HeaderProps): JSX.Element {
       </div>
       {element && element}
       <ul className="user-block">
-        <li className="user-block__item">
-          <div className="user-block__avatar">
-            <Link to="/myList">
-              <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-            </Link>
-          </div>
-        </li>
+        {authorizationStatus === AuthorizationStatus.Auth ?
+          <li className="user-block__item">
+            <div className="user-block__avatar">
+              <Link to="/myList">
+                <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
+              </Link>
+            </div>
+          </li>: ''}
         <li className="user-block__item">
           {authorizationStatus === AuthorizationStatus.Auth ?
             <Link

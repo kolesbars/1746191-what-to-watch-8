@@ -1,7 +1,7 @@
 import {FilmList} from '../film-list/film-list';
 import {useHistory} from 'react-router-dom';
 import {useState, useEffect} from 'react';
-import {AppRoute, APIRoute} from '../../const';
+import {AppRoute, APIRoute, ErrorMessage} from '../../const';
 import GenresList from './genres-list';
 import {useSelector} from 'react-redux';
 import Loading from '../loading/loading';
@@ -9,25 +9,27 @@ import Header from '../header/header';
 import Footer from '../footer/footer';
 import ShowMoreButton from './show-more-button';
 import {FilmType} from '../../types/film-type';
-import {getGenre, getUnfilteredFilms, getLoadedDataStatus} from '../../store/selectors';
+import {getLoadedDataStatus, getGenre, getFilmList, selectFilmsByGenre} from '../../store/list-process/selectors';
 import {emptyFilm} from '../../const';
 import {adaptToClient} from '../../utils/common';
+import {toast} from 'react-toastify';
 import {AxiosInstance} from 'axios';
 
 const FILMS_COUNT = 8;
 
 type MainScreenProps = {
   api: AxiosInstance,
-  films: FilmType[],
   changeStatusFunction: (id: number, filmStatus: boolean, cb: (data: boolean) => void) => Promise<void>
 }
 
 function Main(props: MainScreenProps): JSX.Element {
-  const {api, films, changeStatusFunction} = props;
+  const {api, changeStatusFunction} = props;
 
   const genre = useSelector(getGenre);
-  const unfilteredFilms = useSelector(getUnfilteredFilms);
+  const unfilteredFilms = useSelector(getFilmList);
   const isDataLoaded = useSelector(getLoadedDataStatus);
+  const films = useSelector(selectFilmsByGenre);
+
   const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -36,10 +38,14 @@ function Main(props: MainScreenProps): JSX.Element {
   const [filmStatus, setFilmStatus] = useState(false);
 
   const loadPromoFilmData = async () => {
-    setIsLoading(true);
-    const {data} = await api.get<FilmType>(APIRoute.Promo);
-    setPromoFilmData(adaptToClient(data));
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const {data} = await api.get<FilmType>(APIRoute.Promo);
+      setPromoFilmData(adaptToClient(data));
+      setIsLoading(false);
+    } catch {
+      toast.info(ErrorMessage.LoadDataFail);
+    }
   };
 
   useEffect(() => {

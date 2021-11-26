@@ -1,8 +1,11 @@
 import ReviewForm from '../../components/review-form/review-form';
 import Header from '../header/header';
 import HeaderNav from './header-nav';
-import {useSelector} from 'react-redux';
-import {getFilmData} from '../../store/selectors';
+import {useSelector, useDispatch} from 'react-redux';
+import {getFilmData} from '../../store/film-data/selectors';
+import {useParams} from 'react-router';
+import {useEffect} from 'react';
+import {fetchCurrentFilmAction} from '../../store/api-actions';
 import {AxiosInstance} from 'axios';
 
 type AddReviewProps = {
@@ -10,8 +13,17 @@ type AddReviewProps = {
 }
 
 function AddReview({api}: AddReviewProps): JSX.Element {
+  const {id} = useParams<{id: string}>();
+  const currentId = +id;
+
+  const dispatch = useDispatch();
+
   const filmData = useSelector(getFilmData);
-  const {name, backgroundImage, id, posterImage} = filmData;
+  const {name, backgroundImage, posterImage} = filmData;
+
+  useEffect(() => {
+    dispatch(fetchCurrentFilmAction(currentId));
+  }, [currentId]);
 
   return (
     <section className="film-card film-card--full">
@@ -24,7 +36,7 @@ function AddReview({api}: AddReviewProps): JSX.Element {
         <Header
           element = {
             <HeaderNav
-              id={id}
+              id={currentId}
               name={name}
             />
           }
