@@ -1,8 +1,8 @@
 import {FilmType} from '../../types/film-type';
-import Genre from './genre';
 import {useSelector, useDispatch} from 'react-redux';
 import {changeGenre} from '../../store/action';
 import {getGenre, selectGenresFromFilmList} from '../../store/list-process/selectors';
+import Genre from '../genre/genre';
 
 type GenresListProps = {
   films: FilmType[]

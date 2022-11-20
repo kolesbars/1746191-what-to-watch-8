@@ -3,7 +3,7 @@ import {CommentType} from '../../types/comment-type';
 import {FilmList} from '../film-list/film-list';
 import {Link, useParams, useHistory} from 'react-router-dom';
 import {AppRoute, APIRoute, AuthorizationStatus, ErrorMessage} from '../../const';
-import FilmDetails from './film-details';
+import FilmDetails from '../film-details/film-details';
 import Header from '../header/header';
 import Footer from '../footer/footer';
 import Loading from '../loading/loading';

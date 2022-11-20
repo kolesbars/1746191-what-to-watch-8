@@ -8,7 +8,7 @@ import NotFoundScreen from '../not-found-screen/not-found-screen';
 import {AppRoute, APIRoute, ErrorMessage} from '../../const';
 import {Switch, Route, Router as BrowserRouter} from 'react-router-dom';
 import PrivateRoute from '../private-route/private-route';
-import RouteForGuests from '../private-route/route-for-guests';
+import RouteForGuests from '../route-for-guests/route-for-guests';
 import browserHistory from '../../browser-history';
 import {FilmType} from '../../types/film-type';
 import {adaptToClient} from '../../utils/common';

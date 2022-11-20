@@ -1,7 +1,7 @@
 import {FilmType} from '../../types/film-type';
 import {CommentType} from '../../types/comment-type';
 import {useState} from 'react';
-import Comment from './comment';
+import Comment from '../comment/comment';
 
 type FilmDetailsProps = {
   data: FilmType,

@@ -1,6 +1,6 @@
 import ReviewForm from '../../components/review-form/review-form';
 import Header from '../header/header';
-import HeaderNav from './header-nav';
+import HeaderNav from '../header-nav/header-nav';
 import {useSelector, useDispatch} from 'react-redux';
 import {getFilmData} from '../../store/film-data/selectors';
 import {useParams} from 'react-router';

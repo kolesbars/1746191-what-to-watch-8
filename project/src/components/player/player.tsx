@@ -7,8 +7,8 @@ import {getFilmData} from '../../store/film-data/selectors';
 import {toast} from 'react-toastify';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import Spinner from './spinner';
 import {fetchCurrentFilmAction} from '../../store/api-actions';
+import Spinner from '../spiner/spinner';
 
 const VIDEO_FAIL_MESSAGE ='Не удалось загрузить видео';
 

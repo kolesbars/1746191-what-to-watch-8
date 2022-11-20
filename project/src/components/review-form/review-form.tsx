@@ -1,5 +1,4 @@
 import {useState, BaseSyntheticEvent} from 'react';
-import RatingStar from './rating-star';
 import {memo} from 'react';
 import {AxiosInstance} from 'axios';
 import {CommentType} from '../../types/comment-type';
@@ -10,6 +9,7 @@ import {useRef} from 'react';
 import {useEffect} from 'react';
 import {toast} from 'react-toastify';
 import {useParams, useHistory} from 'react-router-dom';
+import RatingStar from '../rating-star/rating-star';
 
 type ReviewFormProps = {
   api: AxiosInstance

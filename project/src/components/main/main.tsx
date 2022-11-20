@@ -2,18 +2,18 @@ import {FilmList} from '../film-list/film-list';
 import {useHistory} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import {AppRoute, APIRoute, ErrorMessage} from '../../const';
-import GenresList from './genres-list';
 import {useSelector} from 'react-redux';
-import Loading from '../loading/loading';
-import Header from '../header/header';
-import Footer from '../footer/footer';
-import ShowMoreButton from './show-more-button';
 import {FilmType} from '../../types/film-type';
 import {getLoadedDataStatus, getGenre, getFilmList, selectFilmsByGenre} from '../../store/list-process/selectors';
 import {emptyFilm} from '../../const';
 import {adaptToClient} from '../../utils/common';
 import {toast} from 'react-toastify';
 import {AxiosInstance} from 'axios';
+import GenresList from '../genre-list/genres-list';
+import Loading from '../loading/loading';
+import Header from '../header/header';
+import Footer from '../footer/footer';
+import ShowMoreButton from '../show-more-button/show-more-button';
 
 const FILMS_COUNT = 8;
 
